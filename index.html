@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LajuPDF - Konverter File Gratis & </title>
+    <title>LajuPDF - Konverter File Gratis & Premium</title>
     <meta name="description"
         content="Solusi cerdas untuk mengonversi gambar dan dokumen Office Anda menjadi PDF berkualitas tinggi dalam hitungan detik. 100% Gratis dan Aman." />
 
@@ -560,8 +560,6 @@
 
             const CONVERT_API_SECRET = 'ULdVICqQnjjdfoWBEu6ZzVr7Caf1KpKV';
 
-            // KODE INI YANG MENENTUKAN TOMBOL MUNCUL ATAU TIDAK.
-            // Bisa dilihat di bawah ini, SAMA SEKALI TIDAK ADA "mergedocx" ATAU "GABUNG WORD".
             const toolCards = [
                 { mode: 'docx', icon: 'file-word', title: 'Word ke PDF', desc: 'Pertahankan tata letak dokumen Word (DOCX) Anda ke PDF.', color: '#2b579a', bg: '#eff6ff', apiRequired: true, accept: '.docx,.doc', multiple: false },
                 { mode: 'xlsx', icon: 'file-excel', title: 'Excel ke PDF', desc: 'Ubah tabel spreadsheet yang rumit menjadi dokumen PDF rapi.', color: '#16a34a', bg: '#f0fdf4', apiRequired: true, accept: '.xlsx,.xls', multiple: false },
@@ -574,6 +572,8 @@
                 { mode: 'pdf2pptx', icon: 'file-powerpoint', title: 'PDF ke PPTX', desc: 'Jadikan PDF Anda sebagai slide presentasi PowerPoint.', color: '#ea580c', bg: '#fff7ed', apiRequired: true, accept: 'application/pdf', multiple: false },
                 { mode: 'pdf2img', icon: 'image', title: 'PDF ke Gambar', desc: 'Konversi halaman PDF menjadi file gambar (JPG/PNG).', color: '#8b5cf6', bg: '#f5f3ff', apiRequired: true, accept: 'application/pdf', multiple: false },
                 { mode: 'png2jpg', icon: 'file-image', title: 'PNG ke JPG', desc: 'Ubah gambar PNG menjadi JPG dengan latar belakang putih.', color: '#f59e0b', bg: '#fef3c7', apiRequired: false, accept: 'image/png', multiple: false },
+
+                // FITUR BARU: Hapus Background Gambar
                 { mode: 'removebg', icon: 'eraser', title: 'Hapus Background', desc: 'Hapus latar belakang gambar secara otomatis (AI).', color: '#db2777', bg: '#fce7f3', apiRequired: false, accept: 'image/*', multiple: false },
             ];
 
@@ -683,6 +683,11 @@
             async function processConversion() {
                 if (selectedFiles.length === 0) return;
 
+                // Failsafe Bypass
+                if (currentMode === 'mergepdf' || currentMode === 'removebg') {
+                    isApiRequired = false;
+                }
+
                 btnConvert.disabled = true;
                 hide(btnConvert);
                 show(loadingStatus);
@@ -693,7 +698,7 @@
                     } else if (currentMode === 'mergepdf') {
                         await mergePDFs();
                     } else if (currentMode === 'removebg') {
-                        await processRemoveBg();
+                        await processRemoveBg(); // Panggil fungsi Hapus Background
                     } else {
                         await processImage();
                     }
@@ -789,6 +794,7 @@
                 downloadBlob(blob, 'LajuPDF_Gabungan.pdf');
             }
 
+            // FUNGSI BARU: AI Hapus Background
             function processRemoveBg() {
                 return new Promise(async (resolve, reject) => {
                     try {
@@ -799,16 +805,22 @@
                         const file = selectedFiles[0];
                         const baseName = file.name.replace(/\.[^.]+$/, '');
 
+                        // Ganti teks loading khusus fitur ini
                         const originalLoadingText = loadingStatus.innerHTML;
-                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Memuat Model AI & Menghapus Background... (Agak lama untuk file pertama)';
+                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Memuat Model AI & Menghapus Background... (Proses pertama agak lama)';
 
+                        // Konfigurasi path AI Model agar diambil langsung dari CDN
                         const config = {
                             publicPath: "https://unpkg.com/@imgly/background-removal@1.4.3/dist/"
                         };
 
+                        // Proses AI dijalankan di browser
                         const blob = await imglyRemoveBackground(file, config);
 
+                        // Otomatis output berbentuk PNG (karena transparan)
                         downloadBlob(blob, `${baseName}_nobg.png`);
+
+                        // Kembalikan teks loading semula
                         loadingStatus.innerHTML = originalLoadingText;
                         resolve();
                     } catch (err) {
