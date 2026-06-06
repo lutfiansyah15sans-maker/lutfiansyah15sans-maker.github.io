@@ -4,25 +4,21 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LajuPDF - Konverter File Gratis &amp; Premium</title>
+    <title>LajuPDF - Konverter File Gratis & Premium</title>
     <meta name="description"
         content="Solusi cerdas untuk mengonversi gambar dan dokumen Office Anda menjadi PDF berkualitas tinggi dalam hitungan detik. 100% Gratis dan Aman." />
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet" />
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- jsPDF (CDN) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- pdf-lib (CDN) -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <style>
@@ -40,7 +36,8 @@
         }
 
         button,
-        input {
+        input,
+        select {
             font: inherit;
         }
 
@@ -276,7 +273,29 @@
             font-weight: 700;
             color: #10b981;
             font-size: 18px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+        }
+
+        .format-select {
+            display: block;
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto 25px auto;
+            padding: 12px 18px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 14px;
+            border: 2px solid #e2e8f0;
+            background-color: #f8fafc;
+            color: #4f46e5;
+            outline: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .format-select:focus {
+            border-color: #4f46e5;
+            background-color: #ffffff;
         }
 
         .btn-primary {
@@ -319,7 +338,6 @@
             margin-top: auto;
         }
 
-        /* ── Hidden ── */
         .hidden {
             display: none !important;
         }
@@ -401,6 +419,11 @@
 
             .upload-area h3 {
                 font-size: 18px;
+            }
+
+            .format-select {
+                max-width: 100%;
+                font-size: 15px;
             }
 
             .btn-primary {
@@ -485,7 +508,6 @@
 
     <div class="page-shell">
 
-        <!-- ═══════════════════ HEADER ═══════════════════ -->
         <header>
             <button class="logo" type="button" id="logo-btn">
                 <i class="fas fa-layer-group"></i> LajuPDF
@@ -493,7 +515,6 @@
             <div class="header-tag">Alat Konversi Premium</div>
         </header>
 
-        <!-- ═══════════════════ HOME VIEW ═══════════════════ -->
         <div id="home-view">
             <section class="hero" id="hero-section">
                 <h1>Satu Platform, Semua Format.</h1>
@@ -502,11 +523,9 @@
             </section>
 
             <section class="tools-container" id="tools-section">
-                <!-- Cards injected by JS -->
             </section>
         </div>
 
-        <!-- ═══════════════════ WORKSPACE VIEW ═══════════════════ -->
         <section id="workspace-container" class="hidden">
             <div id="workspace">
                 <div class="workspace-top">
@@ -526,6 +545,12 @@
                 <input type="file" id="file-input" style="display:none" />
                 <div id="file-info"></div>
 
+                <select id="output-format-select" class="format-select hidden">
+                    <option value="jpg">Format: JPG</option>
+                    <option value="jpeg">Format: JPEG</option>
+                    <option value="png">Format: PNG</option>
+                </select>
+
                 <button class="btn-primary hidden" type="button" id="btn-convert">
                     Mulai Konversi <i class="fas fa-arrow-right"></i>
                 </button>
@@ -536,7 +561,6 @@
             </div>
         </section>
 
-        <!-- AdSense -->
         <script async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3965718775323414"
             crossorigin="anonymous"></script>
@@ -548,10 +572,8 @@
         (function () {
             'use strict';
 
-            /* ── ConvertAPI secret (same as convert.js) ── */
             const CONVERT_API_SECRET = 'ULdVICqQnjjdfoWBEu6ZzVr7Caf1KpKV';
 
-            /* ── Tool definitions ── */
             const toolCards = [
                 { mode: 'docx', icon: 'file-word', title: 'Word ke PDF', desc: 'Pertahankan tata letak dokumen Word (DOCX) Anda ke PDF.', color: '#2b579a', bg: '#eff6ff', apiRequired: true, accept: '.docx,.doc', multiple: false },
                 { mode: 'xlsx', icon: 'file-excel', title: 'Excel ke PDF', desc: 'Ubah tabel spreadsheet yang rumit menjadi dokumen PDF rapi.', color: '#16a34a', bg: '#f0fdf4', apiRequired: true, accept: '.xlsx,.xls', multiple: false },
@@ -559,14 +581,18 @@
                 { mode: 'img2pdf', icon: 'file-pdf', title: 'Gambar ke PDF', desc: 'Gabungkan file JPG atau PNG Anda menjadi satu file PDF utuh.', color: '#e11d48', bg: '#fff1f2', apiRequired: false, accept: 'image/*', multiple: false },
                 { mode: 'jpg2png', icon: 'images', title: 'JPG ke PNG', desc: 'Ubah ekstensi gambar JPG ke PNG secara instan tanpa internet.', color: '#0284c7', bg: '#f0f9ff', apiRequired: false, accept: 'image/*', multiple: false },
                 { mode: 'mergepdf', icon: 'object-group', title: 'Gabung PDF', desc: 'Pilih beberapa file PDF dan satukan semuanya secara urut.', color: '#475569', bg: '#f8fafc', apiRequired: false, accept: 'application/pdf', multiple: true },
+                { mode: 'pdf2docx', icon: 'file-word', title: 'PDF ke Word', desc: 'Ubah file PDF menjadi dokumen Word (DOCX) yang bisa diedit.', color: '#2b579a', bg: '#eff6ff', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'pdf2xlsx', icon: 'file-excel', title: 'PDF ke Excel', desc: 'Ekstrak tabel dari PDF ke spreadsheet Excel (XLSX).', color: '#16a34a', bg: '#f0fdf4', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'pdf2pptx', icon: 'file-powerpoint', title: 'PDF ke PPTX', desc: 'Jadikan PDF Anda sebagai slide presentasi PowerPoint.', color: '#ea580c', bg: '#fff7ed', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'pdf2img', icon: 'image', title: 'PDF ke Gambar', desc: 'Konversi halaman PDF menjadi file gambar (JPG/PNG).', color: '#8b5cf6', bg: '#f5f3ff', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'png2jpg', icon: 'file-image', title: 'PNG ke JPG', desc: 'Ubah gambar PNG menjadi JPG dengan latar belakang putih.', color: '#f59e0b', bg: '#fef3c7', apiRequired: false, accept: 'image/png', multiple: false },
+                { mode: 'mergedocx', icon: 'file-lines', title: 'Gabung Word', desc: 'Gabungkan beberapa file Word menjadi satu dokumen utuh.', color: '#0ea5e9', bg: '#e0f2fe', apiRequired: true, accept: '.docx,.doc', multiple: true },
             ];
 
-            /* ── State ── */
             let currentMode = '';
             let isApiRequired = false;
             let selectedFiles = [];
 
-            /* ── DOM refs ── */
             const homeView = document.getElementById('home-view');
             const workspaceContainer = document.getElementById('workspace-container');
             const toolsSection = document.getElementById('tools-section');
@@ -577,27 +603,26 @@
             const uploadArea = document.getElementById('upload-area');
             const fileInput = document.getElementById('file-input');
             const fileInfoEl = document.getElementById('file-info');
+            const formatSelectEl = document.getElementById('output-format-select');
             const btnConvert = document.getElementById('btn-convert');
             const loadingStatus = document.getElementById('loading-status');
 
-            /* ── Build tool cards ── */
             toolCards.forEach(tool => {
                 const btn = document.createElement('button');
                 btn.className = 'tool-card';
                 btn.type = 'button';
                 btn.dataset.mode = tool.mode;
                 btn.innerHTML = `
-      <div class="icon-circle" style="color:${tool.color};background:${tool.bg}">
-        <i class="fas fa-${tool.icon}"></i>
-      </div>
-      <div class="tool-title">${tool.title}</div>
-      <div class="tool-desc">${tool.desc}</div>
-    `;
+                  <div class="icon-circle" style="color:${tool.color};background:${tool.bg}">
+                    <i class="fas fa-${tool.icon}"></i>
+                  </div>
+                  <div class="tool-title">${tool.title}</div>
+                  <div class="tool-desc">${tool.desc}</div>
+                `;
                 btn.addEventListener('click', () => openWorkspace(tool));
                 toolsSection.appendChild(btn);
             });
 
-            /* ── Navigation ── */
             function openWorkspace(tool) {
                 currentMode = tool.mode;
                 isApiRequired = tool.apiRequired;
@@ -611,6 +636,12 @@
                 workspaceDescEl.textContent = tool.multiple
                     ? 'Anda dapat memilih lebih dari satu file.'
                     : 'Pilih satu file yang ingin diubah.';
+
+                if (currentMode === 'pdf2img') {
+                    show(formatSelectEl);
+                } else {
+                    hide(formatSelectEl);
+                }
 
                 hide(btnConvert);
                 hide(loadingStatus);
@@ -634,6 +665,12 @@
                     img2pdf: 'Konversi Gambar',
                     jpg2png: 'Konversi Gambar',
                     mergepdf: 'Gabung PDF',
+                    pdf2docx: 'Konversi PDF ke Word',
+                    pdf2xlsx: 'Konversi PDF ke Excel',
+                    pdf2pptx: 'Konversi PDF ke PPTX',
+                    pdf2img: 'Konversi PDF ke Gambar',
+                    png2jpg: 'Konversi PNG ke JPG',
+                    mergedocx: 'Gabung File Word',
                 };
                 return map[tool.mode] || 'Konversi File';
             }
@@ -641,7 +678,6 @@
             logoBtnEl.addEventListener('click', closeWorkspace);
             btnBack.addEventListener('click', closeWorkspace);
 
-            /* ── File picking ── */
             uploadArea.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', (e) => {
                 selectedFiles = Array.from(e.target.files || []);
@@ -654,10 +690,8 @@
                 }
             });
 
-            /* ── Convert button ── */
             btnConvert.addEventListener('click', processConversion);
 
-            /* ── Main conversion dispatcher ── */
             async function processConversion() {
                 if (selectedFiles.length === 0) return;
                 btnConvert.disabled = true;
@@ -685,28 +719,55 @@
                 show(btnConvert);
             }
 
-            /* ── ConvertAPI (called directly from browser) ── */
             async function processWithConvertAPI() {
-                const file = selectedFiles[0];
+                let apiFrom = currentMode;
+                let apiTo = 'pdf';
 
-                const fileBase64 = await readAsBase64(file);
+                if (currentMode === 'pdf2docx') { apiFrom = 'pdf'; apiTo = 'docx'; }
+                else if (currentMode === 'pdf2xlsx') { apiFrom = 'pdf'; apiTo = 'xlsx'; }
+                else if (currentMode === 'pdf2pptx') { apiFrom = 'pdf'; apiTo = 'pptx'; }
+                else if (currentMode === 'pdf2img') {
+                    apiFrom = 'pdf';
+                    apiTo = formatSelectEl.value;
+                }
+                else if (currentMode === 'mergedocx') {
+                    apiFrom = 'docx';
+                    apiTo = 'docx';
+                }
+
+                let parameters = [];
+
+                if (selectedFiles.length > 1) {
+                    // Direvisi agar lebih mudah dibaca oleh parser/linter VS Code
+                    const fileValues = await Promise.all(selectedFiles.map(async (file) => {
+                        const base64Data = await readAsBase64(file);
+                        return {
+                            Name: file.name,
+                            Data: base64Data
+                        };
+                    }));
+
+                    parameters.push({
+                        Name: 'Files',
+                        FileValues: fileValues
+                    });
+                } else {
+                    const fileBase64 = await readAsBase64(selectedFiles[0]);
+                    parameters.push({
+                        Name: 'File',
+                        FileValue: {
+                            Name: selectedFiles[0].name,
+                            Data: fileBase64,
+                        },
+                    });
+                }
 
                 const response = await fetch(
-                    `https://v2.convertapi.com/convert/${currentMode}/to/pdf?Secret=${CONVERT_API_SECRET}`,
+                    `https://v2.convertapi.com/convert/${apiFrom}/to/${apiTo}?Secret=${CONVERT_API_SECRET}`,
                     {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            Parameters: [
-                                {
-                                    Name: 'File',
-                                    FileValue: {
-                                        Name: file.name,
-                                        Data: fileBase64,
-                                    },
-                                },
-                            ],
-                        }),
+                        body: JSON.stringify({ Parameters: parameters }),
                     }
                 );
 
@@ -716,29 +777,25 @@
                     throw new Error(data.Message || data.Error || `ConvertAPI error ${response.status}`);
                 }
 
-                const fileItem = data.Files?.[0];
-                if (!fileItem) throw new Error('Server gagal mengembalikan isi file.');
+                if (!data.Files || data.Files.length === 0) throw new Error('Server gagal mengembalikan isi file.');
 
-                const baseName = file.name.replace(/\.[^.]+$/, '');
+                const baseName = selectedFiles[0].name.replace(/\.[^.]+$/, '');
 
-                if (fileItem.FileData) {
-                    const blob = await (await fetch(`data:application/pdf;base64,${fileItem.FileData}`)).blob();
-                    downloadBlob(blob, `${baseName}.pdf`);
-                    return;
+                for (const fileItem of data.Files) {
+                    let outName = fileItem.FileName || `${baseName}.${apiTo}`;
+
+                    if (fileItem.FileData) {
+                        const blob = await (await fetch(`data:application/octet-stream;base64,${fileItem.FileData}`)).blob();
+                        downloadBlob(blob, outName);
+                    } else if (fileItem.Url) {
+                        const fileResp = await fetch(fileItem.Url);
+                        if (!fileResp.ok) throw new Error(`Gagal mengunduh file dari server (${fileResp.status})`);
+                        const blob = await fileResp.blob();
+                        downloadBlob(blob, outName);
+                    }
                 }
-
-                if (fileItem.Url) {
-                    const fileResp = await fetch(fileItem.Url);
-                    if (!fileResp.ok) throw new Error(`Gagal mengunduh file dari server (${fileResp.status})`);
-                    const blob = await fileResp.blob();
-                    downloadBlob(blob, `${baseName}.pdf`);
-                    return;
-                }
-
-                throw new Error('Server tidak mengembalikan data file.');
             }
 
-            /* ── Merge PDFs (pdf-lib) ── */
             async function mergePDFs() {
                 const { PDFDocument } = PDFLib;
                 const mergedPdf = await PDFDocument.create();
@@ -755,7 +812,6 @@
                 downloadBlob(blob, 'LajuPDF_Gabungan.pdf');
             }
 
-            /* ── Image conversion (jsPDF / canvas) ── */
             function processImage() {
                 return new Promise((resolve, reject) => {
                     const file = selectedFiles[0];
@@ -773,7 +829,8 @@
                                     const doc = new jsPDF({ orientation, unit: 'px', format: [img.width, img.height] });
                                     doc.addImage(img.src, 'JPEG', 0, 0, img.width, img.height);
                                     doc.save(`${baseName}.pdf`);
-                                } else if (currentMode === 'jpg2png') {
+                                }
+                                else if (currentMode === 'jpg2png') {
                                     const canvas = document.createElement('canvas');
                                     canvas.width = img.width;
                                     canvas.height = img.height;
@@ -781,6 +838,21 @@
                                     const link = document.createElement('a');
                                     link.href = canvas.toDataURL('image/png');
                                     link.download = `${baseName}.png`;
+                                    link.click();
+                                }
+                                else if (currentMode === 'png2jpg') {
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = img.width;
+                                    canvas.height = img.height;
+                                    const ctx = canvas.getContext('2d');
+
+                                    ctx.fillStyle = "#FFFFFF";
+                                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                    ctx.drawImage(img, 0, 0);
+
+                                    const link = document.createElement('a');
+                                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                                    link.download = `${baseName}.jpg`;
                                     link.click();
                                 }
                                 resolve();
@@ -794,7 +866,6 @@
                 });
             }
 
-            /* ── Helpers ── */
             function readAsBase64(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
