@@ -18,7 +18,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <style>
@@ -643,18 +642,10 @@
 
             function getTitleForMode(tool) {
                 const map = {
-                    docx: 'Konversi Word ke PDF',
-                    xlsx: 'Konversi Excel ke PDF',
-                    pptx: 'Konversi PPTX ke PDF',
-                    img2pdf: 'Konversi Gambar',
-                    jpg2png: 'Konversi Gambar',
-                    mergepdf: 'Gabung PDF',
-                    pdf2docx: 'Konversi PDF ke Word',
-                    pdf2xlsx: 'Konversi PDF ke Excel',
-                    pdf2pptx: 'Konversi PDF ke PPTX',
-                    pdf2img: 'Konversi PDF ke Gambar',
-                    png2jpg: 'Konversi PNG ke JPG',
-                    removebg: 'Hapus Background Gambar',
+                    docx: 'Konversi Word ke PDF', xlsx: 'Konversi Excel ke PDF', pptx: 'Konversi PPTX ke PDF',
+                    img2pdf: 'Konversi Gambar', jpg2png: 'Konversi Gambar', mergepdf: 'Gabung PDF',
+                    pdf2docx: 'Konversi PDF ke Word', pdf2xlsx: 'Konversi PDF ke Excel', pdf2pptx: 'Konversi PDF ke PPTX',
+                    pdf2img: 'Konversi PDF ke Gambar', png2jpg: 'Konversi PNG ke JPG', removebg: 'Hapus Background Gambar',
                 };
                 return map[tool.mode] || 'Konversi File';
             }
@@ -725,7 +716,6 @@
                         const base64Data = await readAsBase64(file);
                         return { Name: file.name, Data: base64Data };
                     }));
-
                     parameters.push({ Name: 'Files', FileValues: fileValues });
                 } else {
                     const fileBase64 = await readAsBase64(selectedFiles[0]);
@@ -785,7 +775,7 @@
                 downloadBlob(blob, 'LajuPDF_Gabungan.pdf');
             }
 
-            // PERBAIKAN: Fungsi AI Dipanggil lewat Dynamic Import
+            // PERBAIKAN: Fungsi Paksa (Programmatic Injection) untuk melewati blokir CORS/Browser
             function processRemoveBg() {
                 return new Promise(async (resolve, reject) => {
                     try {
@@ -793,24 +783,39 @@
                         const baseName = file.name.replace(/\.[^.]+$/, '');
 
                         const originalLoadingText = loadingStatus.innerHTML;
-                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Menyiapkan Model AI & Menghapus Latar... (Proses pertama bisa butuh 1-2 menit)';
+                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sedang mengunduh Mesin AI & Memproses... <br><span style="font-size:12px; font-weight:normal; color:#64748b;">(Proses ini memakan waktu 1-3 menit. Jangan tutup layar!)</span>';
 
-                        // Import Library secara dinamis dari jsDelivr (lebih stabil)
-                        const imglyModule = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.3/dist/imglyRemoveBackground.esm.js');
-                        const imglyRemoveBackground = imglyModule.default;
+                        // Mengecek apakah library belum terinstall, jika belum kita inject paksa ke HTML
+                        if (typeof window.imglyRemoveBackground === 'undefined') {
+                            await new Promise((res, rej) => {
+                                const script = document.createElement('script');
+                                // Menggunakan CDN unpkg yang lebih universal untuk UMD
+                                script.src = "https://unpkg.com/@imgly/background-removal@1.4.3/dist/imglyRemoveBackground.umd.js";
+                                script.crossOrigin = "anonymous";
+                                script.onload = res;
+                                script.onerror = () => rej(new Error("Skrip AI diblokir. Pastikan Adblocker mati."));
+                                document.head.appendChild(script);
+                            });
+                        }
 
-                        // Pastikan folder sumber model diambil dari CDN yang sama
+                        // Proteksi jika ternyata masih gagal dimuat
+                        if (typeof window.imglyRemoveBackground === 'undefined') {
+                            throw new Error("Library gagal dieksekusi oleh browser.");
+                        }
+
                         const config = {
-                            publicPath: "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.3/dist/"
+                            publicPath: "https://unpkg.com/@imgly/background-removal@1.4.3/dist/"
                         };
 
-                        const blob = await imglyRemoveBackground(file, config);
+                        // Panggil AI-nya (ada di objek window)
+                        const blob = await window.imglyRemoveBackground(file, config);
 
-                        downloadBlob(blob, `${baseName}_Tanpa_Latar.png`);
+                        downloadBlob(blob, `${baseName}_TanpaLatar.png`);
                         loadingStatus.innerHTML = originalLoadingText;
                         resolve();
+
                     } catch (err) {
-                        reject(new Error("Gagal menghapus background. Coba gunakan gambar lain atau pastikan koneksi internet stabil. Detail: " + err.message));
+                        reject(new Error("AI Gagal: " + err.message + " | Coba matikan Adblock/VPN, atau file terlalu besar."));
                     }
                 });
             }
