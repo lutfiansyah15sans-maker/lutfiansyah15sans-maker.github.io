@@ -21,8 +21,6 @@
 
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
-    <script src="https://unpkg.com/@imgly/background-removal@1.4.3/dist/imglyRemoveBackground.umd.js"></script>
-
     <style>
         * {
             margin: 0;
@@ -572,8 +570,6 @@
                 { mode: 'pdf2pptx', icon: 'file-powerpoint', title: 'PDF ke PPTX', desc: 'Jadikan PDF Anda sebagai slide presentasi PowerPoint.', color: '#ea580c', bg: '#fff7ed', apiRequired: true, accept: 'application/pdf', multiple: false },
                 { mode: 'pdf2img', icon: 'image', title: 'PDF ke Gambar', desc: 'Konversi halaman PDF menjadi file gambar (JPG/PNG).', color: '#8b5cf6', bg: '#f5f3ff', apiRequired: true, accept: 'application/pdf', multiple: false },
                 { mode: 'png2jpg', icon: 'file-image', title: 'PNG ke JPG', desc: 'Ubah gambar PNG menjadi JPG dengan latar belakang putih.', color: '#f59e0b', bg: '#fef3c7', apiRequired: false, accept: 'image/png', multiple: false },
-
-                // FITUR BARU: Hapus Background Gambar
                 { mode: 'removebg', icon: 'eraser', title: 'Hapus Background', desc: 'Hapus latar belakang gambar secara otomatis (AI).', color: '#db2777', bg: '#fce7f3', apiRequired: false, accept: 'image/*', multiple: false },
             ];
 
@@ -683,11 +679,6 @@
             async function processConversion() {
                 if (selectedFiles.length === 0) return;
 
-                // Failsafe Bypass
-                if (currentMode === 'mergepdf' || currentMode === 'removebg') {
-                    isApiRequired = false;
-                }
-
                 btnConvert.disabled = true;
                 hide(btnConvert);
                 show(loadingStatus);
@@ -698,7 +689,7 @@
                     } else if (currentMode === 'mergepdf') {
                         await mergePDFs();
                     } else if (currentMode === 'removebg') {
-                        await processRemoveBg(); // Panggil fungsi Hapus Background
+                        await processRemoveBg();
                     } else {
                         await processImage();
                     }
@@ -794,37 +785,32 @@
                 downloadBlob(blob, 'LajuPDF_Gabungan.pdf');
             }
 
-            // FUNGSI BARU: AI Hapus Background
+            // PERBAIKAN: Fungsi AI Dipanggil lewat Dynamic Import
             function processRemoveBg() {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        if (typeof imglyRemoveBackground === 'undefined') {
-                            return reject(new Error("Library AI gagal dimuat. Pastikan koneksi internet aktif."));
-                        }
-
                         const file = selectedFiles[0];
                         const baseName = file.name.replace(/\.[^.]+$/, '');
 
-                        // Ganti teks loading khusus fitur ini
                         const originalLoadingText = loadingStatus.innerHTML;
-                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Memuat Model AI & Menghapus Background... (Proses pertama agak lama)';
+                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Menyiapkan Model AI & Menghapus Latar... (Proses pertama bisa butuh 1-2 menit)';
 
-                        // Konfigurasi path AI Model agar diambil langsung dari CDN
+                        // Import Library secara dinamis dari jsDelivr (lebih stabil)
+                        const imglyModule = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.3/dist/imglyRemoveBackground.esm.js');
+                        const imglyRemoveBackground = imglyModule.default;
+
+                        // Pastikan folder sumber model diambil dari CDN yang sama
                         const config = {
-                            publicPath: "https://unpkg.com/@imgly/background-removal@1.4.3/dist/"
+                            publicPath: "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.3/dist/"
                         };
 
-                        // Proses AI dijalankan di browser
                         const blob = await imglyRemoveBackground(file, config);
 
-                        // Otomatis output berbentuk PNG (karena transparan)
-                        downloadBlob(blob, `${baseName}_nobg.png`);
-
-                        // Kembalikan teks loading semula
+                        downloadBlob(blob, `${baseName}_Tanpa_Latar.png`);
                         loadingStatus.innerHTML = originalLoadingText;
                         resolve();
                     } catch (err) {
-                        reject(new Error("Gagal menghapus background: " + err.message));
+                        reject(new Error("Gagal menghapus background. Coba gunakan gambar lain atau pastikan koneksi internet stabil. Detail: " + err.message));
                     }
                 });
             }
