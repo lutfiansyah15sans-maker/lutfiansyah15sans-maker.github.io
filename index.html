@@ -26,8 +26,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            /* Transisi halus untuk mode gelap */
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
@@ -78,7 +77,6 @@
             cursor: pointer;
         }
 
-        /* Container untuk elemen di kanan header */
         .header-right {
             display: flex;
             align-items: center;
@@ -94,7 +92,6 @@
             border-radius: 20px;
         }
 
-        /* Tombol Mode Gelap/Terang */
         .theme-toggle-btn {
             background: transparent;
             border: none;
@@ -134,7 +131,6 @@
             left: 0;
             background: #f4f7fe;
             transform: skewY(-2deg);
-            transition: background-color 0.3s ease;
         }
 
         .hero h1 {
@@ -304,10 +300,10 @@
         .format-select {
             display: block;
             width: 100%;
-            max-width: 250px;
+            max-width: 320px;
             margin: 0 auto 25px auto;
             padding: 12px 18px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             border-radius: 14px;
             border: 2px solid #e2e8f0;
@@ -315,12 +311,51 @@
             color: #4f46e5;
             outline: none;
             cursor: pointer;
-            transition: 0.3s;
         }
 
         .format-select:focus {
             border-color: #4f46e5;
             background-color: #ffffff;
+        }
+
+        /* Styling Form Split PDF */
+        #split-options {
+            max-width: 350px;
+            margin: 0 auto 25px auto;
+            text-align: left;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        #pdf-page-count {
+            font-size: 14px;
+            color: #10b981;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        #split-pages-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid #cbd5e1;
+            font-size: 15px;
+            margin-top: 10px;
+            outline: none;
+        }
+
+        #split-pages-input:focus {
+            border-color: #4f46e5;
+        }
+
+        .split-help {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+            line-height: 1.4;
         }
 
         .btn-primary {
@@ -451,10 +486,27 @@
         body.dark-mode .theme-toggle-btn:hover {
             background: #334155;
             color: #fcd34d;
-            /* Warna kuning matahari */
         }
 
-        /* ================================================= */
+        /* Dark mode untuk Split Options */
+        body.dark-mode #split-options {
+            background: #0f172a;
+            border-color: #475569;
+        }
+
+        body.dark-mode #split-pages-input {
+            background: #1e293b;
+            color: #f8fafc;
+            border-color: #475569;
+        }
+
+        body.dark-mode #split-pages-input:focus {
+            border-color: #6366f1;
+        }
+
+        body.dark-mode .split-help {
+            color: #94a3b8;
+        }
 
         @media (max-width: 768px) {
             header {
@@ -662,10 +714,23 @@
                 <div id="file-info"></div>
 
                 <select id="output-format-select" class="format-select hidden">
-                    <option value="jpg">Format: JPG</option>
-                    <option value="jpeg">Format: JPEG</option>
-                    <option value="png">Format: PNG</option>
+                    <option value="jpg">Format Output: JPG</option>
+                    <option value="png">Format Output: PNG</option>
                 </select>
+
+                <select id="compress-level-select" class="format-select hidden">
+                    <option value="ebook">Level: Standar (Kualitas Bagus, Ukuran Sedang)</option>
+                    <option value="web">Level: Ekstrim (Ukuran Sangat Kecil)</option>
+                </select>
+
+                <div id="split-options" class="hidden">
+                    <p id="pdf-page-count"></p>
+                    <p style="font-weight: 600; margin-bottom: 5px;">Halaman mana yang ingin diambil?</p>
+                    <input type="text" id="split-pages-input" placeholder="Contoh: 1, 3, 5-7">
+                    <p class="split-help">Biarkan kosong jika ingin mengekstrak <b>semua halaman</b> menjadi file
+                        terpisah, atau ketik halamannya (Contoh: <b>1, 3, 5-7</b>) untuk menyatukannya di satu PDF baru.
+                    </p>
+                </div>
 
                 <button class="btn-primary hidden" type="button" id="btn-convert">
                     Mulai Konversi <i class="fas fa-arrow-right"></i>
@@ -688,18 +753,13 @@
         (function () {
             'use strict';
 
-            // ==========================================
-            // KONFIGURASI API KEY
-            // ==========================================
             const CONVERT_API_SECRET = 'ULdVICqQnjjdfoWBEu6ZzVr7Caf1KpKV';
             const REMOVE_BG_API_KEY = 'DrpHQUQznRZzsCJMCTqiBQfi';
-            // ==========================================
 
             // === LOGIKA MODE GELAP (DARK MODE) ===
             const themeToggleBtn = document.getElementById('theme-toggle');
             const themeIcon = themeToggleBtn.querySelector('i');
 
-            // Cek pilihan tema sebelumnya di LocalStorage
             if (localStorage.getItem('lajupdf_theme') === 'dark') {
                 document.body.classList.add('dark-mode');
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
@@ -707,8 +767,6 @@
 
             themeToggleBtn.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
-
-                // Simpan pengaturan dan ubah ikon
                 if (document.body.classList.contains('dark-mode')) {
                     themeIcon.classList.replace('fa-moon', 'fa-sun');
                     localStorage.setItem('lajupdf_theme', 'dark');
@@ -717,8 +775,8 @@
                     localStorage.setItem('lajupdf_theme', 'light');
                 }
             });
-            // ==========================================
 
+            // === PENAMBAHAN 3 FITUR BARU DI MENU ===
             const toolCards = [
                 { mode: 'docx', icon: 'file-word', title: 'Word ke PDF', desc: 'Pertahankan tata letak dokumen Word (DOCX) Anda ke PDF.', color: '#2b579a', bg: '#eff6ff', apiRequired: true, accept: '.docx,.doc', multiple: false },
                 { mode: 'xlsx', icon: 'file-excel', title: 'Excel ke PDF', desc: 'Ubah tabel spreadsheet yang rumit menjadi dokumen PDF rapi.', color: '#16a34a', bg: '#f0fdf4', apiRequired: true, accept: '.xlsx,.xls', multiple: false },
@@ -732,14 +790,20 @@
                 { mode: 'pdf2img', icon: 'image', title: 'PDF ke Gambar', desc: 'Konversi halaman PDF menjadi file gambar (JPG/PNG).', color: '#8b5cf6', bg: '#f5f3ff', apiRequired: true, accept: 'application/pdf', multiple: false },
                 { mode: 'png2jpg', icon: 'file-image', title: 'PNG ke JPG', desc: 'Ubah gambar PNG menjadi JPG dengan latar belakang putih.', color: '#f59e0b', bg: '#fef3c7', apiRequired: false, accept: 'image/png', multiple: false },
                 { mode: 'removebg', icon: 'eraser', title: 'Hapus Background', desc: 'Hapus latar belakang gambar secara otomatis dengan API Remove.bg.', color: '#db2777', bg: '#fce7f3', apiRequired: false, accept: 'image/*', multiple: false },
-                { mode: 'compresspdf', icon: 'compress', title: 'Kompres PDF', desc: 'Kecilkan ukuran file PDF Anda tanpa mengurangi kualitas dokumen secara drastis.', color: '#10b981', bg: '#dcfce7', apiRequired: true, accept: 'application/pdf', multiple: false },
-                { mode: 'splitpdf', icon: 'scissors', title: 'Pisahkan PDF', desc: 'Pecah satu file PDF menjadi file terpisah untuk setiap halamannya.', color: '#8b5cf6', bg: '#ede9fe', apiRequired: true, accept: 'application/pdf', multiple: false },
-                { mode: 'pdf2txt', icon: 'file-lines', title: 'PDF ke Teks', desc: 'Ekstrak dan ambil seluruh tulisan teks dari dalam dokumen PDF Anda (.txt).', color: '#6366f1', bg: '#e0e7ff', apiRequired: true, accept: 'application/pdf', multiple: false },
+
+                // Fitur Baru
+                { mode: 'compresspdf', icon: 'compress', title: 'Kompres PDF', desc: 'Kecilkan ukuran file PDF Anda tanpa mengurangi kualitas secara drastis.', color: '#10b981', bg: '#dcfce7', apiRequired: true, accept: 'application/pdf', multiple: false },
+
+                // Pisah PDF pakai local API, jadi apiRequired = false agar hemat kuota dan lebih cepat
+                { mode: 'splitpdf', icon: 'scissors', title: 'Pisahkan PDF', desc: 'Ambil halaman tertentu atau pecah file PDF secara mudah dan instan.', color: '#8b5cf6', bg: '#ede9fe', apiRequired: false, accept: 'application/pdf', multiple: false },
+
+                { mode: 'pdf2txt', icon: 'file-lines', title: 'PDF ke Teks', desc: 'Ekstrak dan ambil seluruh teks dari dalam dokumen PDF Anda menjadi tulisan (.txt).', color: '#6366f1', bg: '#e0e7ff', apiRequired: true, accept: 'application/pdf', multiple: false },
             ];
 
             let currentMode = '';
             let isApiRequired = false;
             let selectedFiles = [];
+            let currentTotalPages = 0; // Menyimpan total halaman PDF
 
             const homeView = document.getElementById('home-view');
             const workspaceContainer = document.getElementById('workspace-container');
@@ -752,6 +816,10 @@
             const fileInput = document.getElementById('file-input');
             const fileInfoEl = document.getElementById('file-info');
             const formatSelectEl = document.getElementById('output-format-select');
+            const compressSelectEl = document.getElementById('compress-level-select');
+            const splitOptionsEl = document.getElementById('split-options');
+            const splitPagesInput = document.getElementById('split-pages-input');
+            const pdfPageCountEl = document.getElementById('pdf-page-count');
             const btnConvert = document.getElementById('btn-convert');
             const loadingStatus = document.getElementById('loading-status');
 
@@ -775,20 +843,30 @@
                 currentMode = tool.mode;
                 isApiRequired = tool.apiRequired;
                 selectedFiles = [];
+                currentTotalPages = 0;
+
                 fileInfoEl.textContent = '';
                 fileInput.value = '';
                 fileInput.accept = tool.accept;
                 fileInput.multiple = tool.multiple;
+                splitPagesInput.value = ''; // Reset input split
 
                 workspaceTitleEl.textContent = getTitleForMode(tool);
                 workspaceDescEl.textContent = tool.multiple
                     ? 'Anda dapat memilih lebih dari satu file.'
                     : 'Pilih satu file yang ingin diubah.';
 
+                // Menampilkan menu rahasia berdasarkan fitur yang diklik
+                hide(formatSelectEl);
+                hide(compressSelectEl);
+                hide(splitOptionsEl);
+
                 if (currentMode === 'pdf2img') {
                     show(formatSelectEl);
-                } else {
-                    hide(formatSelectEl);
+                } else if (currentMode === 'compresspdf') {
+                    show(compressSelectEl);
+                } else if (currentMode === 'splitpdf') {
+                    // Split option baru akan dimunculkan saat file sudah diunggah
                 }
 
                 hide(btnConvert);
@@ -820,14 +898,30 @@
             btnBack.addEventListener('click', closeWorkspace);
 
             uploadArea.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', (e) => {
+
+            fileInput.addEventListener('change', async (e) => {
                 selectedFiles = Array.from(e.target.files || []);
                 if (selectedFiles.length > 0) {
                     fileInfoEl.textContent = `${selectedFiles.length} file siap diproses.`;
                     show(btnConvert);
+
+                    // LOGIKA KHUSUS BACA JUMLAH HALAMAN (Untuk Split PDF)
+                    if (currentMode === 'splitpdf') {
+                        try {
+                            const arrayBuffer = await selectedFiles[0].arrayBuffer();
+                            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                            currentTotalPages = pdfDoc.getPageCount();
+                            pdfPageCountEl.innerHTML = `<i class="fas fa-file-pdf"></i> Dokumen ini memiliki total ${currentTotalPages} Halaman.`;
+                            show(splitOptionsEl);
+                        } catch (error) {
+                            pdfPageCountEl.textContent = "Gagal membaca jumlah halaman PDF. Pastikan file tidak rusak.";
+                        }
+                    }
+
                 } else {
                     fileInfoEl.textContent = '';
                     hide(btnConvert);
+                    hide(splitOptionsEl);
                 }
             });
 
@@ -845,6 +939,8 @@
                         await processWithConvertAPI();
                     } else if (currentMode === 'mergepdf') {
                         await mergePDFs();
+                    } else if (currentMode === 'splitpdf') {
+                        await processSplitPdf(); // Fungsi Lokal Baru
                     } else if (currentMode === 'removebg') {
                         await processRemoveBg();
                     } else {
@@ -875,7 +971,6 @@
                     apiTo = formatSelectEl.value;
                 }
                 else if (currentMode === 'compresspdf') { apiFrom = 'pdf'; apiTo = 'compress'; }
-                else if (currentMode === 'splitpdf') { apiFrom = 'pdf'; apiTo = 'split'; }
                 else if (currentMode === 'pdf2txt') { apiFrom = 'pdf'; apiTo = 'txt'; }
 
                 let parameters = [];
@@ -891,6 +986,14 @@
                     parameters.push({
                         Name: 'File',
                         FileValue: { Name: selectedFiles[0].name, Data: fileBase64 },
+                    });
+                }
+
+                // Kirim level kompresi ke API ConvertAPI jika mode Compress
+                if (currentMode === 'compresspdf') {
+                    parameters.push({
+                        Name: 'Preset',
+                        Value: compressSelectEl.value
                     });
                 }
 
@@ -914,9 +1017,7 @@
                 const baseName = selectedFiles[0].name.replace(/\.[^.]+$/, '');
 
                 let fallbackExt = apiTo;
-                if (apiTo === 'compress' || apiTo === 'split') {
-                    fallbackExt = 'pdf';
-                }
+                if (apiTo === 'compress') { fallbackExt = 'pdf'; } // Kompresi tetap PDF
 
                 for (const fileItem of data.Files) {
                     let outName = fileItem.FileName || `${baseName}.${fallbackExt}`;
@@ -949,11 +1050,77 @@
                 downloadBlob(blob, 'LajuPDF_Gabungan.pdf');
             }
 
+            // FUNGSI BARU: Pisahkan PDF atau Ekstrak Halaman Secara Lokal (Super Cepat)
+            async function processSplitPdf() {
+                const { PDFDocument } = PDFLib;
+                const file = selectedFiles[0];
+                const baseName = file.name.replace(/\.[^.]+$/, '');
+                const arrayBuffer = await file.arrayBuffer();
+
+                const originalPdf = await PDFDocument.load(arrayBuffer);
+                const inputVal = splitPagesInput.value.trim();
+
+                // 1. JIKA INPUT KOSONG: Pisahkan Semua Halaman (Download 1-1)
+                // Peringatan: Browser mungkin memblokir multiple download jika halamannya banyak.
+                if (inputVal === '') {
+                    const total = originalPdf.getPageCount();
+                    if (total > 15) {
+                        alert("File ini memiliki lebih dari 15 halaman. Mengunduh secara terpisah mungkin diblokir oleh browser. Sangat disarankan mengisi rentang halaman (Misal: 1-10).");
+                    }
+
+                    for (let i = 0; i < total; i++) {
+                        const newPdf = await PDFDocument.create();
+                        const [copiedPage] = await newPdf.copyPages(originalPdf, [i]);
+                        newPdf.addPage(copiedPage);
+                        const pdfBytes = await newPdf.save();
+                        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        downloadBlob(blob, `${baseName}_Hal_${i + 1}.pdf`);
+                        // Jeda sedikit agar browser tidak menolak multiple download
+                        await new Promise(r => setTimeout(r, 800));
+                    }
+                    return;
+                }
+
+                // 2. JIKA INPUT DIISI: Parsing string angka (Misal "1, 3, 5-7")
+                const pagesToExtract = new Set();
+                const parts = inputVal.split(',');
+
+                for (let part of parts) {
+                    part = part.trim();
+                    if (part.includes('-')) {
+                        const [start, end] = part.split('-').map(Number);
+                        if (start && end && start <= end) {
+                            for (let i = start; i <= end; i++) {
+                                if (i >= 1 && i <= currentTotalPages) pagesToExtract.add(i - 1); // Indeks dimulai dari 0
+                            }
+                        }
+                    } else {
+                        const num = Number(part);
+                        if (num >= 1 && num <= currentTotalPages) pagesToExtract.add(num - 1);
+                    }
+                }
+
+                const pageIndices = Array.from(pagesToExtract).sort((a, b) => a - b);
+
+                if (pageIndices.length === 0) {
+                    throw new Error("Nomor halaman yang dimasukkan tidak valid atau melebihi jumlah halaman.");
+                }
+
+                // Ekstrak halaman menjadi 1 PDF baru
+                const newPdf = await PDFDocument.create();
+                const copiedPages = await newPdf.copyPages(originalPdf, pageIndices);
+                copiedPages.forEach(page => newPdf.addPage(page));
+
+                const pdfBytes = await newPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                downloadBlob(blob, `${baseName}_Diekstrak.pdf`);
+            }
+
             function processRemoveBg() {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        if (REMOVE_BG_API_KEY === 'DrpHQUQznRZzsCJMCTqiBQfi') {
-                            return reject(new Error("Kamu belum memasukkan API Key Remove.BG di dalam kode HTML. Silakan daftar gratis di remove.bg/api untuk mendapatkannya."));
+                        if (REMOVE_BG_API_KEY === 'TARUH_API_KEY_REMOVEBG_DISINI') {
+                            return reject(new Error("Kamu belum memasukkan API Key Remove.BG. Silakan daftar gratis di remove.bg/api untuk mendapatkannya."));
                         }
 
                         const file = selectedFiles[0];
