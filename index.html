@@ -21,13 +21,13 @@
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <style>
-        /* [STYLE TETAP SAMA SEPERTI KODE TERBARU KAMU] */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
+            /* Transisi halus untuk mode gelap */
         }
 
         body {
@@ -78,6 +78,7 @@
             cursor: pointer;
         }
 
+        /* Container untuk elemen di kanan header */
         .header-right {
             display: flex;
             align-items: center;
@@ -93,6 +94,7 @@
             border-radius: 20px;
         }
 
+        /* Tombol Mode Gelap/Terang */
         .theme-toggle-btn {
             background: transparent;
             border: none;
@@ -302,10 +304,10 @@
         .format-select {
             display: block;
             width: 100%;
-            max-width: 320px;
+            max-width: 250px;
             margin: 0 auto 25px auto;
             padding: 12px 18px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             border-radius: 14px;
             border: 2px solid #e2e8f0;
@@ -313,34 +315,12 @@
             color: #4f46e5;
             outline: none;
             cursor: pointer;
+            transition: 0.3s;
         }
 
-        #split-options {
-            max-width: 350px;
-            margin: 0 auto 25px auto;
-            text-align: left;
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-        }
-
-        #pdf-page-count {
-            font-size: 14px;
-            color: #10b981;
-            font-weight: 700;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        #split-pages-input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 2px solid #cbd5e1;
-            font-size: 15px;
-            margin-top: 10px;
-            outline: none;
+        .format-select:focus {
+            border-color: #4f46e5;
+            background-color: #ffffff;
         }
 
         .btn-primary {
@@ -363,6 +343,11 @@
             box-shadow: 0 15px 25px rgba(79, 70, 229, 0.3);
         }
 
+        .btn-primary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
         .loading-text {
             color: #4f46e5;
             font-weight: 700;
@@ -374,7 +359,9 @@
             display: none !important;
         }
 
-        /* [DARK MODE STYLES SAMA] */
+        /* ================================================= */
+        /* STYLING KHUSUS MODE GELAP (DARK MODE) */
+        /* ================================================= */
         body.dark-mode {
             background-color: #0f172a;
             color: #f8fafc;
@@ -396,11 +383,30 @@
         body.dark-mode .tool-card {
             background: #1e293b;
             border-color: #334155;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .tool-card:hover {
+            border-color: #6366f1;
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        body.dark-mode .tool-title {
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .tool-desc {
+            color: #94a3b8;
         }
 
         body.dark-mode #workspace {
             background: #1e293b;
             border-color: #334155;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode .workspace-desc {
+            color: #94a3b8;
         }
 
         body.dark-mode .upload-area {
@@ -408,15 +414,205 @@
             border-color: #475569;
         }
 
-        body.dark-mode #split-options {
-            background: #0f172a;
-            border-color: #475569;
+        body.dark-mode .upload-area:hover {
+            background: #1e293b;
+            border-color: #6366f1;
         }
 
-        body.dark-mode #split-pages-input {
-            background: #1e293b;
+        body.dark-mode .upload-area p {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .btn-back {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .btn-back:hover {
+            background: #475569;
             color: #f8fafc;
+        }
+
+        body.dark-mode .format-select {
+            background-color: #0f172a;
             border-color: #475569;
+            color: #818cf8;
+        }
+
+        body.dark-mode .format-select:focus {
+            border-color: #6366f1;
+            background-color: #1e293b;
+        }
+
+        body.dark-mode .loading-text {
+            color: #818cf8;
+        }
+
+        body.dark-mode .theme-toggle-btn:hover {
+            background: #334155;
+            color: #fcd34d;
+            /* Warna kuning matahari */
+        }
+
+        /* ================================================= */
+
+        @media (max-width: 768px) {
+            header {
+                padding: 16px 20px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .header-tag {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+
+            .hero {
+                padding: 70px 20px 100px;
+                margin-bottom: -50px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+                letter-spacing: -1px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .tools-container {
+                padding: 16px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+
+            .tool-card {
+                padding: 24px 16px;
+                border-radius: 16px;
+            }
+
+            .icon-circle {
+                width: 58px;
+                height: 58px;
+                font-size: 24px;
+                border-radius: 16px;
+                margin-bottom: 14px;
+            }
+
+            .tool-title {
+                font-size: 15px;
+                margin-bottom: 8px;
+            }
+
+            .tool-desc {
+                font-size: 12px;
+            }
+
+            #workspace-container {
+                padding: 30px 16px;
+            }
+
+            #workspace {
+                padding: 28px 20px;
+                border-radius: 22px;
+            }
+
+            .upload-area {
+                padding: 50px 16px;
+                border-radius: 16px;
+            }
+
+            .upload-area i {
+                font-size: 36px;
+            }
+
+            .upload-area h3 {
+                font-size: 18px;
+            }
+
+            .format-select {
+                max-width: 100%;
+                font-size: 15px;
+            }
+
+            .btn-primary {
+                width: 100%;
+                padding: 15px 20px;
+                font-size: 16px;
+                border-radius: 12px;
+            }
+
+            .loading-text {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 14px 16px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .header-tag {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 26px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            .tools-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .tool-card {
+                padding: 20px 12px;
+            }
+
+            .icon-circle {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .tool-title {
+                font-size: 13px;
+            }
+
+            .tool-desc {
+                font-size: 11px;
+            }
+
+            #workspace {
+                padding: 24px 16px;
+                border-radius: 18px;
+            }
+
+            .upload-area {
+                padding: 40px 12px;
+            }
+
+            #file-info {
+                font-size: 15px;
+            }
+
+            .btn-back {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
         }
     </style>
 </head>
@@ -429,74 +625,448 @@
             </button>
             <div class="header-right">
                 <div class="header-tag">Alat Konversi Premium</div>
-                <button id="theme-toggle" class="theme-toggle-btn" title="Ganti Tema"><i
-                        class="fas fa-moon"></i></button>
+                <button id="theme-toggle" class="theme-toggle-btn" title="Ganti Tema">
+                    <i class="fas fa-moon"></i>
+                </button>
             </div>
         </header>
 
         <div id="home-view">
             <section class="hero" id="hero-section">
                 <h1>Satu Platform, Semua Format.</h1>
-                <p>Solusi cerdas untuk mengonversi dokumen Anda menjadi PDF dalam hitungan detik. 100% Gratis dan Aman.
-                </p>
+                <p>Solusi cerdas untuk mengonversi gambar dan dokumen Office Anda menjadi PDF berkualitas tinggi dalam
+                    hitungan detik. 100% Gratis dan Aman.</p>
             </section>
-            <section class="tools-container" id="tools-section"></section>
+
+            <section class="tools-container" id="tools-section">
+            </section>
         </div>
 
         <section id="workspace-container" class="hidden">
             <div id="workspace">
-                <div class="workspace-top"><button class="btn-back" type="button" id="btn-back"><i
-                            class="fas fa-arrow-left"></i> Kembali</button></div>
-                <h2 id="workspace-title">Konversi File</h2>
-                <p class="workspace-desc" id="workspace-desc">Unggah file Anda di bawah ini.</p>
-                <div class="upload-area" id="upload-area"><i class="fas fa-cloud-upload-alt"></i>
-                    <h3>Pilih File</h3>
+                <div class="workspace-top">
+                    <button class="btn-back" type="button" id="btn-back">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </button>
                 </div>
+                <h2 id="workspace-title">Konversi File</h2>
+                <p class="workspace-desc" id="workspace-desc">Unggah file Anda di bawah ini dengan aman.</p>
+
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Pilih File Anda</h3>
+                    <p>Mendukung pemrosesan instan</p>
+                </div>
+
                 <input type="file" id="file-input" style="display:none" />
                 <div id="file-info"></div>
 
-                <select id="output-format-select" class="format-select hidden"></select>
-                <div id="split-options" class="hidden">
-                    <p id="pdf-page-count"></p>
-                    <input type="text" id="split-pages-input" placeholder="Contoh: 1, 3, 5-7">
-                </div>
+                <select id="output-format-select" class="format-select hidden">
+                    <option value="jpg">Format: JPG</option>
+                    <option value="jpeg">Format: JPEG</option>
+                    <option value="png">Format: PNG</option>
+                </select>
 
-                <button class="btn-primary hidden" type="button" id="btn-convert">Mulai Konversi <i
-                        class="fas fa-arrow-right"></i></button>
-                <div id="loading-status" class="loading-text hidden"><i class="fas fa-circle-notch fa-spin"></i>
-                    Memproses...</div>
+                <button class="btn-primary hidden" type="button" id="btn-convert">
+                    Mulai Konversi <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <div id="loading-status" class="loading-text hidden">
+                    <i class="fas fa-circle-notch fa-spin"></i> Mesin sedang memproses dokumen Anda...
+                </div>
             </div>
         </section>
+
+        <script async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3965718775323414"
+            crossorigin="anonymous"></script>
+
         <footer>&copy; 2026 LajuPDF. All rights reserved.</footer>
     </div>
 
     <script>
         (function () {
             'use strict';
+
+            // ==========================================
+            // KONFIGURASI API KEY
+            // ==========================================
             const CONVERT_API_SECRET = 'ULdVICqQnjjdfoWBEu6ZzVr7Caf1KpKV';
             const REMOVE_BG_API_KEY = 'DrpHQUQznRZzsCJMCTqiBQfi';
+            // ==========================================
 
-            const toolCards = [
-                { mode: 'docx', icon: 'file-word', title: 'Word ke PDF', apiRequired: true, accept: '.docx,.doc' },
-                { mode: 'mergepdf', icon: 'object-group', title: 'Gabung PDF', apiRequired: false, accept: 'application/pdf', multiple: true },
-                { mode: 'removebg', icon: 'eraser', title: 'Hapus Background', apiRequired: false, accept: 'image/*' },
-                { mode: 'compresspdf', icon: 'compress', title: 'Kompres PDF', apiRequired: true, accept: 'application/pdf' },
-                { mode: 'splitpdf', icon: 'scissors', title: 'Pisahkan PDF', apiRequired: false, accept: 'application/pdf' },
-                { mode: 'pdf2txt', icon: 'file-lines', title: 'PDF ke Teks', apiRequired: true, accept: 'application/pdf' }
-            ];
+            // === LOGIKA MODE GELAP (DARK MODE) ===
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeIcon = themeToggleBtn.querySelector('i');
 
-            // Inisialisasi dan Logika Utama (Sama seperti struktur sebelumnya)
-            // [Saya telah mempermudah inisialisasi agar sesuai permintaan kamu]
-
-            // ... (Fungsi openWorkspace, processConversion, dll) ...
-
-            // LOGIKA KOMPRESI
-            function getCompressOptions() {
-                return `<select id="compress-level" class="format-select"><option value="ebook">Standar</option><option value="web">Ekstrim</option></select>`;
+            // Cek pilihan tema sebelumnya di LocalStorage
+            if (localStorage.getItem('lajupdf_theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
             }
 
-            // [Lanjutkan dengan fungsi-fungsi utama seperti sebelumnya]
-            // (Saya akan berikan kode utuh di balasan berikutnya jika sudah yakin)
+            themeToggleBtn.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+
+                // Simpan pengaturan dan ubah ikon
+                if (document.body.classList.contains('dark-mode')) {
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    localStorage.setItem('lajupdf_theme', 'dark');
+                } else {
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    localStorage.setItem('lajupdf_theme', 'light');
+                }
+            });
+            // ==========================================
+
+            const toolCards = [
+                { mode: 'docx', icon: 'file-word', title: 'Word ke PDF', desc: 'Pertahankan tata letak dokumen Word (DOCX) Anda ke PDF.', color: '#2b579a', bg: '#eff6ff', apiRequired: true, accept: '.docx,.doc', multiple: false },
+                { mode: 'xlsx', icon: 'file-excel', title: 'Excel ke PDF', desc: 'Ubah tabel spreadsheet yang rumit menjadi dokumen PDF rapi.', color: '#16a34a', bg: '#f0fdf4', apiRequired: true, accept: '.xlsx,.xls', multiple: false },
+                { mode: 'pptx', icon: 'file-powerpoint', title: 'PPTX ke PDF', desc: 'Konversi slide presentasi Anda ke format PDF yang siap cetak.', color: '#ea580c', bg: '#fff7ed', apiRequired: true, accept: '.pptx,.ppt', multiple: false },
+                { mode: 'img2pdf', icon: 'file-pdf', title: 'Gambar ke PDF', desc: 'Gabungkan file JPG atau PNG Anda menjadi satu file PDF utuh.', color: '#e11d48', bg: '#fff1f2', apiRequired: false, accept: 'image/*', multiple: false },
+                { mode: 'jpg2png', icon: 'images', title: 'JPG ke PNG', desc: 'Ubah ekstensi gambar JPG ke PNG secara instan tanpa internet.', color: '#0284c7', bg: '#f0f9ff', apiRequired: false, accept: 'image/*', multiple: false },
+                { mode: 'mergepdf', icon: 'object-group', title: 'Gabung PDF', desc: 'Pilih beberapa file PDF dan satukan semuanya secara urut.', color: '#475569', bg: '#f8fafc', apiRequired: false, accept: 'application/pdf', multiple: true },
+                { mode: 'pdf2docx', icon: 'file-word', title: 'PDF ke Word', desc: 'Ubah file PDF menjadi dokumen Word (DOCX) yang bisa diedit.', color: '#2b579a', bg: '#eff6ff', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'pdf2xlsx', icon: 'file-excel', title: 'PDF ke Excel', desc: 'Ekstrak tabel dari PDF ke spreadsheet Excel (XLSX).', color: '#16a34a', bg: '#f0fdf4', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'pdf2pptx', icon: 'file-powerpoint', title: 'PDF ke PPTX', desc: 'Jadikan PDF Anda sebagai slide presentasi PowerPoint.', color: '#ea580c', bg: '#fff7ed', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'pdf2img', icon: 'image', title: 'PDF ke Gambar', desc: 'Konversi halaman PDF menjadi file gambar (JPG/PNG).', color: '#8b5cf6', bg: '#f5f3ff', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'png2jpg', icon: 'file-image', title: 'PNG ke JPG', desc: 'Ubah gambar PNG menjadi JPG dengan latar belakang putih.', color: '#f59e0b', bg: '#fef3c7', apiRequired: false, accept: 'image/png', multiple: false },
+                { mode: 'removebg', icon: 'eraser', title: 'Hapus Background', desc: 'Hapus latar belakang gambar secara otomatis dengan API Remove.bg.', color: '#db2777', bg: '#fce7f3', apiRequired: false, accept: 'image/*', multiple: false },
+                { mode: 'compresspdf', icon: 'compress', title: 'Kompres PDF', desc: 'Kecilkan ukuran file PDF Anda tanpa mengurangi kualitas dokumen secara drastis.', color: '#10b981', bg: '#dcfce7', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'splitpdf', icon: 'scissors', title: 'Pisahkan PDF', desc: 'Pecah satu file PDF menjadi file terpisah untuk setiap halamannya.', color: '#8b5cf6', bg: '#ede9fe', apiRequired: true, accept: 'application/pdf', multiple: false },
+                { mode: 'pdf2txt', icon: 'file-lines', title: 'PDF ke Teks', desc: 'Ekstrak dan ambil seluruh tulisan teks dari dalam dokumen PDF Anda (.txt).', color: '#6366f1', bg: '#e0e7ff', apiRequired: true, accept: 'application/pdf', multiple: false },
+            ];
+
+            let currentMode = '';
+            let isApiRequired = false;
+            let selectedFiles = [];
+
+            const homeView = document.getElementById('home-view');
+            const workspaceContainer = document.getElementById('workspace-container');
+            const toolsSection = document.getElementById('tools-section');
+            const logoBtnEl = document.getElementById('logo-btn');
+            const btnBack = document.getElementById('btn-back');
+            const workspaceTitleEl = document.getElementById('workspace-title');
+            const workspaceDescEl = document.getElementById('workspace-desc');
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const fileInfoEl = document.getElementById('file-info');
+            const formatSelectEl = document.getElementById('output-format-select');
+            const btnConvert = document.getElementById('btn-convert');
+            const loadingStatus = document.getElementById('loading-status');
+
+            toolCards.forEach(tool => {
+                const btn = document.createElement('button');
+                btn.className = 'tool-card';
+                btn.type = 'button';
+                btn.dataset.mode = tool.mode;
+                btn.innerHTML = `
+                  <div class="icon-circle" style="color:${tool.color};background:${tool.bg}">
+                    <i class="fas fa-${tool.icon}"></i>
+                  </div>
+                  <div class="tool-title">${tool.title}</div>
+                  <div class="tool-desc">${tool.desc}</div>
+                `;
+                btn.addEventListener('click', () => openWorkspace(tool));
+                toolsSection.appendChild(btn);
+            });
+
+            function openWorkspace(tool) {
+                currentMode = tool.mode;
+                isApiRequired = tool.apiRequired;
+                selectedFiles = [];
+                fileInfoEl.textContent = '';
+                fileInput.value = '';
+                fileInput.accept = tool.accept;
+                fileInput.multiple = tool.multiple;
+
+                workspaceTitleEl.textContent = getTitleForMode(tool);
+                workspaceDescEl.textContent = tool.multiple
+                    ? 'Anda dapat memilih lebih dari satu file.'
+                    : 'Pilih satu file yang ingin diubah.';
+
+                if (currentMode === 'pdf2img') {
+                    show(formatSelectEl);
+                } else {
+                    hide(formatSelectEl);
+                }
+
+                hide(btnConvert);
+                hide(loadingStatus);
+
+                homeView.classList.add('hidden');
+                workspaceContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function closeWorkspace() {
+                workspaceContainer.classList.add('hidden');
+                homeView.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function getTitleForMode(tool) {
+                const map = {
+                    docx: 'Konversi Word ke PDF', xlsx: 'Konversi Excel ke PDF', pptx: 'Konversi PPTX ke PDF',
+                    img2pdf: 'Konversi Gambar', jpg2png: 'Konversi Gambar', mergepdf: 'Gabung PDF',
+                    pdf2docx: 'Konversi PDF ke Word', pdf2xlsx: 'Konversi PDF ke Excel', pdf2pptx: 'Konversi PDF ke PPTX',
+                    pdf2img: 'Konversi PDF ke Gambar', png2jpg: 'Konversi PNG ke JPG', removebg: 'Hapus Background Gambar',
+                    compresspdf: 'Kompres PDF', splitpdf: 'Pisahkan PDF', pdf2txt: 'Konversi PDF ke Teks',
+                };
+                return map[tool.mode] || 'Konversi File';
+            }
+
+            logoBtnEl.addEventListener('click', closeWorkspace);
+            btnBack.addEventListener('click', closeWorkspace);
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                selectedFiles = Array.from(e.target.files || []);
+                if (selectedFiles.length > 0) {
+                    fileInfoEl.textContent = `${selectedFiles.length} file siap diproses.`;
+                    show(btnConvert);
+                } else {
+                    fileInfoEl.textContent = '';
+                    hide(btnConvert);
+                }
+            });
+
+            btnConvert.addEventListener('click', processConversion);
+
+            async function processConversion() {
+                if (selectedFiles.length === 0) return;
+
+                btnConvert.disabled = true;
+                hide(btnConvert);
+                show(loadingStatus);
+
+                try {
+                    if (isApiRequired) {
+                        await processWithConvertAPI();
+                    } else if (currentMode === 'mergepdf') {
+                        await mergePDFs();
+                    } else if (currentMode === 'removebg') {
+                        await processRemoveBg();
+                    } else {
+                        await processImage();
+                    }
+                } catch (err) {
+                    alert(`Peringatan Sistem: ${err.message}`);
+                } finally {
+                    resetButton();
+                }
+            }
+
+            function resetButton() {
+                hide(loadingStatus);
+                btnConvert.disabled = false;
+                show(btnConvert);
+            }
+
+            async function processWithConvertAPI() {
+                let apiFrom = currentMode;
+                let apiTo = 'pdf';
+
+                if (currentMode === 'pdf2docx') { apiFrom = 'pdf'; apiTo = 'docx'; }
+                else if (currentMode === 'pdf2xlsx') { apiFrom = 'pdf'; apiTo = 'xlsx'; }
+                else if (currentMode === 'pdf2pptx') { apiFrom = 'pdf'; apiTo = 'pptx'; }
+                else if (currentMode === 'pdf2img') {
+                    apiFrom = 'pdf';
+                    apiTo = formatSelectEl.value;
+                }
+                else if (currentMode === 'compresspdf') { apiFrom = 'pdf'; apiTo = 'compress'; }
+                else if (currentMode === 'splitpdf') { apiFrom = 'pdf'; apiTo = 'split'; }
+                else if (currentMode === 'pdf2txt') { apiFrom = 'pdf'; apiTo = 'txt'; }
+
+                let parameters = [];
+
+                if (selectedFiles.length > 1) {
+                    const fileValues = await Promise.all(selectedFiles.map(async (file) => {
+                        const base64Data = await readAsBase64(file);
+                        return { Name: file.name, Data: base64Data };
+                    }));
+                    parameters.push({ Name: 'Files', FileValues: fileValues });
+                } else {
+                    const fileBase64 = await readAsBase64(selectedFiles[0]);
+                    parameters.push({
+                        Name: 'File',
+                        FileValue: { Name: selectedFiles[0].name, Data: fileBase64 },
+                    });
+                }
+
+                const response = await fetch(
+                    `https://v2.convertapi.com/convert/${apiFrom}/to/${apiTo}?Secret=${CONVERT_API_SECRET}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ Parameters: parameters }),
+                    }
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.Message || data.Error || `ConvertAPI error ${response.status}`);
+                }
+
+                if (!data.Files || data.Files.length === 0) throw new Error('Server gagal mengembalikan isi file.');
+
+                const baseName = selectedFiles[0].name.replace(/\.[^.]+$/, '');
+
+                let fallbackExt = apiTo;
+                if (apiTo === 'compress' || apiTo === 'split') {
+                    fallbackExt = 'pdf';
+                }
+
+                for (const fileItem of data.Files) {
+                    let outName = fileItem.FileName || `${baseName}.${fallbackExt}`;
+
+                    if (fileItem.FileData) {
+                        const blob = await (await fetch(`data:application/octet-stream;base64,${fileItem.FileData}`)).blob();
+                        downloadBlob(blob, outName);
+                    } else if (fileItem.Url) {
+                        const fileResp = await fetch(fileItem.Url);
+                        if (!fileResp.ok) throw new Error(`Gagal mengunduh file dari server (${fileResp.status})`);
+                        const blob = await fileResp.blob();
+                        downloadBlob(blob, outName);
+                    }
+                }
+            }
+
+            async function mergePDFs() {
+                const { PDFDocument } = PDFLib;
+                const mergedPdf = await PDFDocument.create();
+
+                for (const file of selectedFiles) {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFDocument.load(arrayBuffer);
+                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    copiedPages.forEach(page => mergedPdf.addPage(page));
+                }
+
+                const mergedPdfBytes = await mergedPdf.save();
+                const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+                downloadBlob(blob, 'LajuPDF_Gabungan.pdf');
+            }
+
+            function processRemoveBg() {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        if (REMOVE_BG_API_KEY === 'DrpHQUQznRZzsCJMCTqiBQfi') {
+                            return reject(new Error("Kamu belum memasukkan API Key Remove.BG di dalam kode HTML. Silakan daftar gratis di remove.bg/api untuk mendapatkannya."));
+                        }
+
+                        const file = selectedFiles[0];
+                        const baseName = file.name.replace(/\.[^.]+$/, '');
+
+                        const originalLoadingText = loadingStatus.innerHTML;
+                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sedang memproses penghapusan latar di server Remove.bg...';
+
+                        const formData = new FormData();
+                        formData.append('size', 'auto');
+                        formData.append('image_file', file);
+
+                        const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+                            method: 'POST',
+                            headers: {
+                                'X-Api-Key': REMOVE_BG_API_KEY
+                            },
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`Server menolak (Error ${response.status}). Pastikan API Key kamu benar atau kuota belum habis.`);
+                        }
+
+                        const blob = await response.blob();
+                        downloadBlob(blob, `${baseName}_TanpaLatar.png`);
+
+                        loadingStatus.innerHTML = originalLoadingText;
+                        resolve();
+
+                    } catch (err) {
+                        reject(new Error("Gagal Hapus Background: " + err.message));
+                    }
+                });
+            }
+
+            function processImage() {
+                return new Promise((resolve, reject) => {
+                    const file = selectedFiles[0];
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        const img = new Image();
+                        img.onload = function () {
+                            try {
+                                const baseName = file.name.replace(/\.[^.]+$/, '');
+
+                                if (currentMode === 'img2pdf') {
+                                    const { jsPDF } = window.jspdf;
+                                    const orientation = img.width > img.height ? 'l' : 'p';
+                                    const doc = new jsPDF({ orientation, unit: 'px', format: [img.width, img.height] });
+                                    doc.addImage(img.src, 'JPEG', 0, 0, img.width, img.height);
+                                    doc.save(`${baseName}.pdf`);
+                                }
+                                else if (currentMode === 'jpg2png') {
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = img.width;
+                                    canvas.height = img.height;
+                                    canvas.getContext('2d').drawImage(img, 0, 0);
+                                    const link = document.createElement('a');
+                                    link.href = canvas.toDataURL('image/png');
+                                    link.download = `${baseName}.png`;
+                                    link.click();
+                                }
+                                else if (currentMode === 'png2jpg') {
+                                    const canvas = document.createElement('canvas');
+                                    canvas.width = img.width;
+                                    canvas.height = img.height;
+                                    const ctx = canvas.getContext('2d');
+
+                                    ctx.fillStyle = "#FFFFFF";
+                                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                    ctx.drawImage(img, 0, 0);
+
+                                    const link = document.createElement('a');
+                                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                                    link.download = `${baseName}.jpg`;
+                                    link.click();
+                                }
+                                resolve();
+                            } catch (e) { reject(e); }
+                        };
+                        img.onerror = reject;
+                        img.src = event.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function readAsBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function downloadBlob(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 2500);
+            }
+
+            function show(el) { el.classList.remove('hidden'); }
+            function hide(el) { el.classList.add('hidden'); }
+
         })();
     </script>
 </body>
