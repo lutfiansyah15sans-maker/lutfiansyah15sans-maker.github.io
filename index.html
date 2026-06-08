@@ -115,6 +115,131 @@
             background: #e0e7ff;
         }
 
+        /* Language Switcher */
+        .lang-switcher {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 13px;
+            border-radius: 22px;
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .lang-btn:hover {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .lang-btn i {
+            font-size: 11px;
+            transition: transform 0.2s ease;
+        }
+
+        .lang-btn.open i {
+            transform: rotate(180deg);
+        }
+
+        .lang-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            min-width: 130px;
+            z-index: 200;
+            animation: dropIn 0.18s ease;
+        }
+
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .lang-dropdown.open {
+            display: block;
+        }
+
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: background 0.15s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .lang-option:hover {
+            background: #f1f5f9;
+            color: #4f46e5;
+        }
+
+        .lang-option.active {
+            color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .lang-option .flag {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* Dark mode language switcher */
+        body.dark-mode .lang-btn {
+            border-color: #334155;
+            color: #94a3b8;
+        }
+
+        body.dark-mode .lang-btn:hover {
+            border-color: #6366f1;
+            color: #818cf8;
+            background: #1e293b;
+        }
+
+        body.dark-mode .lang-dropdown {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        body.dark-mode .lang-option {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .lang-option:hover {
+            background: #0f172a;
+            color: #818cf8;
+        }
+
+        body.dark-mode .lang-option.active {
+            color: #818cf8;
+            background: rgba(99, 102, 241, 0.12);
+        }
+
         .hero {
             background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
             padding: 100px 20px 120px;
@@ -858,7 +983,25 @@
                 <i class="fas fa-layer-group"></i> LajuPDF
             </button>
             <div class="header-right">
-                <div class="header-tag">Alat Konversi Premium</div>
+                <div class="header-tag" id="header-tag-text">Alat Konversi Premium</div>
+
+                <!-- Language Switcher -->
+                <div class="lang-switcher" id="lang-switcher">
+                    <button class="lang-btn" id="lang-btn" type="button" title="Switch Language">
+                        <span id="lang-btn-flag">🇮🇩</span>
+                        <span id="lang-btn-label">ID</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="lang-dropdown" id="lang-dropdown">
+                        <button class="lang-option active" id="lang-opt-id" type="button" data-lang="id">
+                            <span class="flag">🇮🇩</span> Indonesia
+                        </button>
+                        <button class="lang-option" id="lang-opt-en" type="button" data-lang="en">
+                            <span class="flag">🇬🇧</span> English
+                        </button>
+                    </div>
+                </div>
+
                 <button id="theme-toggle" class="theme-toggle-btn" title="Ganti Tema">
                     <i class="fas fa-moon"></i>
                 </button>
@@ -1004,6 +1147,265 @@
                 }
             });
 
+            // === LOGIKA PENGGANTIAN BAHASA (i18n) ===
+            const translations = {
+                id: {
+                    // Header
+                    headerTag: 'Alat Konversi Premium',
+                    themeTitle: 'Ganti Tema',
+                    // Hero
+                    heroTitle: 'Satu Platform, Semua Format.',
+                    heroDesc: 'Solusi cerdas untuk mengonversi gambar dan dokumen Office Anda menjadi PDF berkualitas tinggi dalam hitungan detik. 100% Gratis dan Aman.',
+                    // Meta / Page title
+                    pageTitle: 'LajuPDF - Konverter File Gratis & Premium',
+                    metaDesc: 'Solusi cerdas untuk mengonversi gambar dan dokumen Office Anda menjadi PDF berkualitas tinggi dalam hitungan detik. 100% Gratis dan Aman.',
+                    // Workspace
+                    btnBack: 'Kembali',
+                    uploadTitle: 'Pilih File Anda',
+                    uploadHint: 'Mendukung pemrosesan instan',
+                    workspaceDescSingle: 'Pilih satu file yang ingin diubah.',
+                    workspaceDescMultiple: 'Anda dapat memilih lebih dari satu file.',
+                    btnConvert: 'Mulai Konversi',
+                    loadingText: 'Mesin sedang memproses dokumen Anda...',
+                    fileReady: (n) => `${n} file siap diproses.`,
+                    splitLabel: 'Halaman mana yang ingin diambil?',
+                    splitPlaceholder: 'Contoh: 1, 3, 5-7',
+                    splitHelp: 'Biarkan kosong jika ingin mengekstrak <b>semua halaman</b> menjadi file terpisah, atau ketik halamannya (Contoh: <b>1, 3, 5-7</b>) untuk menyatukannya di satu PDF baru.',
+                    splitPageCount: (n) => `<i class="fas fa-file-pdf"></i> Dokumen ini memiliki total ${n} Halaman.`,
+                    // Compress select
+                    compressStd: 'Level: Standar (Kualitas Bagus, Ukuran Sedang)',
+                    compressExtreme: 'Level: Ekstrim (Ukuran Sangat Kecil)',
+                    // Output format select
+                    outJpg: 'Format Output: JPG',
+                    outPng: 'Format Output: PNG',
+                    // Footer
+                    footerTagline: 'Solusi cerdas untuk konversi dokumen dan gambar secara online. Gratis, cepat, dan aman — tanpa instalasi.',
+                    footerBadge1: '100% Aman',
+                    footerBadge2: 'Super Cepat',
+                    footerBadge3: 'Gratis',
+                    footerPopularTitle: 'Konversi Populer',
+                    footerToolsTitle: 'Alat Lainnya',
+                    footerCopy: '© 2026 <span>LajuPDF</span>. All rights reserved.',
+                    footerMade: 'Dibuat dengan <i class="fas fa-heart"></i> untuk pengguna Indonesia',
+                    // Tool cards
+                    tools: [
+                        { title: 'Word ke PDF',       desc: 'Pertahankan tata letak dokumen Word (DOCX) Anda ke PDF.' },
+                        { title: 'Excel ke PDF',      desc: 'Ubah tabel spreadsheet yang rumit menjadi dokumen PDF rapi.' },
+                        { title: 'PPTX ke PDF',       desc: 'Konversi slide presentasi Anda ke format PDF yang siap cetak.' },
+                        { title: 'Gambar ke PDF',     desc: 'Gabungkan file JPG atau PNG Anda menjadi satu file PDF utuh.' },
+                        { title: 'JPG ke PNG',        desc: 'Ubah ekstensi gambar JPG ke PNG secara instan tanpa internet.' },
+                        { title: 'Gabung PDF',        desc: 'Pilih beberapa file PDF dan satukan semuanya secara urut.' },
+                        { title: 'PDF ke Word',       desc: 'Ubah file PDF menjadi dokumen Word (DOCX) yang bisa diedit.' },
+                        { title: 'PDF ke Excel',      desc: 'Ekstrak tabel dari PDF ke spreadsheet Excel (XLSX).' },
+                        { title: 'PDF ke PPTX',       desc: 'Jadikan PDF Anda sebagai slide presentasi PowerPoint.' },
+                        { title: 'PDF ke Gambar',     desc: 'Konversi halaman PDF menjadi file gambar (JPG/PNG).' },
+                        { title: 'PNG ke JPG',        desc: 'Ubah gambar PNG menjadi JPG dengan latar belakang putih.' },
+                        { title: 'Hapus Background',  desc: 'Hapus latar belakang gambar secara otomatis dengan API Remove.bg.' },
+                        { title: 'Kompres PDF',       desc: 'Kecilkan ukuran file PDF Anda tanpa mengurangi kualitas secara drastis.' },
+                        { title: 'Pisahkan PDF',      desc: 'Ambil halaman tertentu atau pecah file PDF secara mudah dan instan.' },
+                        { title: 'PDF ke Teks',       desc: 'Ekstrak dan ambil seluruh teks dari dalam dokumen PDF Anda menjadi tulisan (.txt).' },
+                    ],
+                    // Workspace titles
+                    workspaceTitles: {
+                        docx: 'Konversi Word ke PDF', xlsx: 'Konversi Excel ke PDF', pptx: 'Konversi PPTX ke PDF',
+                        img2pdf: 'Konversi Gambar', jpg2png: 'Konversi Gambar', mergepdf: 'Gabung PDF',
+                        pdf2docx: 'Konversi PDF ke Word', pdf2xlsx: 'Konversi PDF ke Excel', pdf2pptx: 'Konversi PDF ke PPTX',
+                        pdf2img: 'Konversi PDF ke Gambar', png2jpg: 'Konversi PNG ke JPG', removebg: 'Hapus Background Gambar',
+                        compresspdf: 'Kompres PDF', splitpdf: 'Pisahkan PDF', pdf2txt: 'Konversi PDF ke Teks',
+                    },
+                    // Alerts / errors
+                    alertSplitMany: 'File ini memiliki lebih dari 15 halaman. Mengunduh secara terpisah mungkin diblokir oleh browser. Sangat disarankan mengisi rentang halaman (Misal: 1-10).',
+                    errorInvalidPage: 'Nomor halaman yang dimasukkan tidak valid atau melebihi jumlah halaman.',
+                    errorSystem: (msg) => `Peringatan Sistem: ${msg}`,
+                    errorRemoveBg: (msg) => `Gagal Hapus Background: ${msg}`,
+                    removeBgLoading: '<i class="fas fa-circle-notch fa-spin"></i> Sedang memproses penghapusan latar di server Remove.bg...',
+                },
+                en: {
+                    // Header
+                    headerTag: 'Premium Conversion Tools',
+                    themeTitle: 'Toggle Theme',
+                    // Hero
+                    heroTitle: 'One Platform, All Formats.',
+                    heroDesc: 'The smart solution to convert images and Office documents to high-quality PDFs in seconds. 100% Free & Secure.',
+                    // Meta / Page title
+                    pageTitle: 'LajuPDF - Free & Premium File Converter',
+                    metaDesc: 'The smart solution to convert images and Office documents to high-quality PDFs in seconds. 100% Free & Secure.',
+                    // Workspace
+                    btnBack: 'Back',
+                    uploadTitle: 'Choose Your File',
+                    uploadHint: 'Supports instant processing',
+                    workspaceDescSingle: 'Select one file you want to convert.',
+                    workspaceDescMultiple: 'You can select more than one file.',
+                    btnConvert: 'Start Conversion',
+                    loadingText: 'Engine is processing your document...',
+                    fileReady: (n) => `${n} file${n > 1 ? 's' : ''} ready to process.`,
+                    splitLabel: 'Which pages do you want to extract?',
+                    splitPlaceholder: 'Example: 1, 3, 5-7',
+                    splitHelp: 'Leave blank to extract <b>all pages</b> as separate files, or type the page numbers (e.g. <b>1, 3, 5-7</b>) to merge them into one new PDF.',
+                    splitPageCount: (n) => `<i class="fas fa-file-pdf"></i> This document has a total of ${n} pages.`,
+                    // Compress select
+                    compressStd: 'Level: Standard (Good Quality, Medium Size)',
+                    compressExtreme: 'Level: Extreme (Very Small Size)',
+                    // Output format select
+                    outJpg: 'Output Format: JPG',
+                    outPng: 'Output Format: PNG',
+                    // Footer
+                    footerTagline: 'Smart solution for converting documents and images online. Free, fast, and secure — no installation needed.',
+                    footerBadge1: '100% Secure',
+                    footerBadge2: 'Super Fast',
+                    footerBadge3: 'Free',
+                    footerPopularTitle: 'Popular Conversions',
+                    footerToolsTitle: 'More Tools',
+                    footerCopy: '© 2026 <span>LajuPDF</span>. All rights reserved.',
+                    footerMade: 'Made with <i class="fas fa-heart"></i> for users worldwide',
+                    // Tool cards
+                    tools: [
+                        { title: 'Word to PDF',           desc: 'Preserve the layout of your Word (DOCX) document in PDF.' },
+                        { title: 'Excel to PDF',          desc: 'Convert complex spreadsheet tables to a clean PDF document.' },
+                        { title: 'PPTX to PDF',           desc: 'Convert your presentation slides to a print-ready PDF format.' },
+                        { title: 'Image to PDF',          desc: 'Combine your JPG or PNG files into one complete PDF file.' },
+                        { title: 'JPG to PNG',            desc: 'Convert JPG image extension to PNG instantly, no internet needed.' },
+                        { title: 'Merge PDF',             desc: 'Select multiple PDF files and merge them all in order.' },
+                        { title: 'PDF to Word',           desc: 'Convert a PDF file into an editable Word (DOCX) document.' },
+                        { title: 'PDF to Excel',          desc: 'Extract tables from PDF into an Excel spreadsheet (XLSX).' },
+                        { title: 'PDF to PPTX',           desc: 'Turn your PDF into a PowerPoint presentation.' },
+                        { title: 'PDF to Image',          desc: 'Convert PDF pages into image files (JPG/PNG).' },
+                        { title: 'PNG to JPG',            desc: 'Convert PNG images to JPG with a white background.' },
+                        { title: 'Remove Background',     desc: 'Automatically remove image backgrounds using the Remove.bg API.' },
+                        { title: 'Compress PDF',          desc: 'Reduce the size of your PDF file without drastically reducing quality.' },
+                        { title: 'Split PDF',             desc: 'Extract specific pages or split a PDF file easily and instantly.' },
+                        { title: 'PDF to Text',           desc: 'Extract all text from inside your PDF document into a .txt file.' },
+                    ],
+                    // Workspace titles
+                    workspaceTitles: {
+                        docx: 'Convert Word to PDF', xlsx: 'Convert Excel to PDF', pptx: 'Convert PPTX to PDF',
+                        img2pdf: 'Convert Image', jpg2png: 'Convert Image', mergepdf: 'Merge PDF',
+                        pdf2docx: 'Convert PDF to Word', pdf2xlsx: 'Convert PDF to Excel', pdf2pptx: 'Convert PDF to PPTX',
+                        pdf2img: 'Convert PDF to Image', png2jpg: 'Convert PNG to JPG', removebg: 'Remove Image Background',
+                        compresspdf: 'Compress PDF', splitpdf: 'Split PDF', pdf2txt: 'Convert PDF to Text',
+                    },
+                    // Alerts / errors
+                    alertSplitMany: 'This file has more than 15 pages. Downloading separately may be blocked by the browser. It is highly recommended to fill in the page range (e.g. 1-10).',
+                    errorInvalidPage: 'The page numbers entered are invalid or exceed the total number of pages.',
+                    errorSystem: (msg) => `System Warning: ${msg}`,
+                    errorRemoveBg: (msg) => `Failed to Remove Background: ${msg}`,
+                    removeBgLoading: '<i class="fas fa-circle-notch fa-spin"></i> Processing background removal on Remove.bg servers...',
+                },
+            };
+
+            let currentLang = localStorage.getItem('lajupdf_lang') || 'id';
+
+            function applyLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem('lajupdf_lang', lang);
+                const t = translations[lang];
+
+                // Update <html lang>
+                document.documentElement.lang = lang;
+
+                // Update <title> and meta description
+                document.title = t.pageTitle;
+                const metaDesc = document.querySelector('meta[name="description"]');
+                if (metaDesc) metaDesc.setAttribute('content', t.metaDesc);
+
+                // Header
+                document.getElementById('header-tag-text').textContent = t.headerTag;
+                document.getElementById('theme-toggle').title = t.themeTitle;
+
+                // Hero
+                document.querySelector('.hero h1').textContent = t.heroTitle;
+                document.querySelector('.hero p').textContent = t.heroDesc;
+
+                // Tool cards in the grid
+                const cards = document.querySelectorAll('#tools-section .tool-card');
+                cards.forEach((card, i) => {
+                    if (t.tools[i]) {
+                        card.querySelector('.tool-title').textContent = t.tools[i].title;
+                        card.querySelector('.tool-desc').textContent  = t.tools[i].desc;
+                    }
+                });
+
+                // Back button
+                document.getElementById('btn-back').innerHTML = `<i class="fas fa-arrow-left"></i> ${t.btnBack}`;
+
+                // Upload area
+                document.querySelector('#upload-area h3').textContent = t.uploadTitle;
+                document.querySelector('#upload-area p').textContent  = t.uploadHint;
+
+                // Convert button
+                document.getElementById('btn-convert').innerHTML = `${t.btnConvert} <i class="fas fa-arrow-right"></i>`;
+
+                // Loading status
+                document.getElementById('loading-status').innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${t.loadingText}`;
+
+                // Format selects
+                const fmtSelect = document.getElementById('output-format-select');
+                fmtSelect.options[0].text = t.outJpg;
+                fmtSelect.options[1].text = t.outPng;
+
+                const cmpSelect = document.getElementById('compress-level-select');
+                cmpSelect.options[0].text = t.compressStd;
+                cmpSelect.options[1].text = t.compressExtreme;
+
+                // Split options
+                document.querySelector('#split-options p[style]').textContent = t.splitLabel;
+                document.getElementById('split-pages-input').placeholder = t.splitPlaceholder;
+                document.querySelector('.split-help').innerHTML = t.splitHelp;
+
+                // Footer
+                document.querySelector('.footer-tagline').textContent = t.footerTagline;
+                const badges = document.querySelectorAll('.footer-badge');
+                if (badges[0]) badges[0].innerHTML = `<i class="fas fa-lock"></i> ${t.footerBadge1}`;
+                if (badges[1]) badges[1].innerHTML = `<i class="fas fa-bolt"></i> ${t.footerBadge2}`;
+                if (badges[2]) badges[2].innerHTML = `<i class="fas fa-gift"></i> ${t.footerBadge3}`;
+
+                const footerCols = document.querySelectorAll('.footer-col h4');
+                if (footerCols[0]) footerCols[0].textContent = t.footerPopularTitle;
+                if (footerCols[1]) footerCols[1].textContent = t.footerToolsTitle;
+
+                document.querySelector('.footer-copy').innerHTML  = t.footerCopy;
+                document.querySelector('.footer-made').innerHTML  = t.footerMade;
+
+                // Language button label & flag
+                const flags = { id: '🇮🇩', en: '🇬🇧' };
+                const labels = { id: 'ID', en: 'EN' };
+                document.getElementById('lang-btn-flag').textContent  = flags[lang];
+                document.getElementById('lang-btn-label').textContent = labels[lang];
+
+                // Active option highlight
+                document.querySelectorAll('.lang-option').forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.lang === lang);
+                });
+            }
+
+            // Language dropdown toggle
+            const langBtn      = document.getElementById('lang-btn');
+            const langDropdown = document.getElementById('lang-dropdown');
+
+            langBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                langBtn.classList.toggle('open');
+                langDropdown.classList.toggle('open');
+            });
+
+            document.addEventListener('click', () => {
+                langBtn.classList.remove('open');
+                langDropdown.classList.remove('open');
+            });
+
+            langDropdown.addEventListener('click', (e) => e.stopPropagation());
+
+            document.querySelectorAll('.lang-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    applyLanguage(opt.dataset.lang);
+                    langBtn.classList.remove('open');
+                    langDropdown.classList.remove('open');
+                });
+            });
+
+            // Apply saved language on load
+            applyLanguage(currentLang);
+
             // === PENAMBAHAN 3 FITUR BARU DI MENU ===
             const toolCards = [
                 { mode: 'docx', icon: 'file-word', title: 'Word ke PDF', desc: 'Pertahankan tata letak dokumen Word (DOCX) Anda ke PDF.', color: '#2b579a', bg: '#eff6ff', apiRequired: true, accept: '.docx,.doc', multiple: false },
@@ -1080,9 +1482,10 @@
                 splitPagesInput.value = ''; // Reset input split
 
                 workspaceTitleEl.textContent = getTitleForMode(tool);
+                const tDesc = translations[currentLang];
                 workspaceDescEl.textContent = tool.multiple
-                    ? 'Anda dapat memilih lebih dari satu file.'
-                    : 'Pilih satu file yang ingin diubah.';
+                    ? tDesc.workspaceDescMultiple
+                    : tDesc.workspaceDescSingle;
 
                 // Menampilkan menu rahasia berdasarkan fitur yang diklik
                 hide(formatSelectEl);
@@ -1112,14 +1515,8 @@
             }
 
             function getTitleForMode(tool) {
-                const map = {
-                    docx: 'Konversi Word ke PDF', xlsx: 'Konversi Excel ke PDF', pptx: 'Konversi PPTX ke PDF',
-                    img2pdf: 'Konversi Gambar', jpg2png: 'Konversi Gambar', mergepdf: 'Gabung PDF',
-                    pdf2docx: 'Konversi PDF ke Word', pdf2xlsx: 'Konversi PDF ke Excel', pdf2pptx: 'Konversi PDF ke PPTX',
-                    pdf2img: 'Konversi PDF ke Gambar', png2jpg: 'Konversi PNG ke JPG', removebg: 'Hapus Background Gambar',
-                    compresspdf: 'Kompres PDF', splitpdf: 'Pisahkan PDF', pdf2txt: 'Konversi PDF ke Teks',
-                };
-                return map[tool.mode] || 'Konversi File';
+                const t = translations[currentLang];
+                return t.workspaceTitles[tool.mode] || (currentLang === 'en' ? 'File Conversion' : 'Konversi File');
             }
 
             logoBtnEl.addEventListener('click', closeWorkspace);
@@ -1130,7 +1527,7 @@
             fileInput.addEventListener('change', async (e) => {
                 selectedFiles = Array.from(e.target.files || []);
                 if (selectedFiles.length > 0) {
-                    fileInfoEl.textContent = `${selectedFiles.length} file siap diproses.`;
+                    fileInfoEl.textContent = translations[currentLang].fileReady(selectedFiles.length);
                     show(btnConvert);
 
                     // LOGIKA KHUSUS BACA JUMLAH HALAMAN (Untuk Split PDF)
@@ -1139,10 +1536,12 @@
                             const arrayBuffer = await selectedFiles[0].arrayBuffer();
                             const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
                             currentTotalPages = pdfDoc.getPageCount();
-                            pdfPageCountEl.innerHTML = `<i class="fas fa-file-pdf"></i> Dokumen ini memiliki total ${currentTotalPages} Halaman.`;
+                            pdfPageCountEl.innerHTML = translations[currentLang].splitPageCount(currentTotalPages);
                             show(splitOptionsEl);
                         } catch (error) {
-                            pdfPageCountEl.textContent = "Gagal membaca jumlah halaman PDF. Pastikan file tidak rusak.";
+                            pdfPageCountEl.textContent = currentLang === 'en'
+                                ? 'Failed to read page count. Make sure the file is not corrupted.'
+                                : 'Gagal membaca jumlah halaman PDF. Pastikan file tidak rusak.';
                         }
                     }
 
@@ -1175,7 +1574,7 @@
                         await processImage();
                     }
                 } catch (err) {
-                    alert(`Peringatan Sistem: ${err.message}`);
+                    alert(translations[currentLang].errorSystem(err.message));
                 } finally {
                     resetButton();
                 }
@@ -1293,7 +1692,7 @@
                 if (inputVal === '') {
                     const total = originalPdf.getPageCount();
                     if (total > 15) {
-                        alert("File ini memiliki lebih dari 15 halaman. Mengunduh secara terpisah mungkin diblokir oleh browser. Sangat disarankan mengisi rentang halaman (Misal: 1-10).");
+                        alert(translations[currentLang].alertSplitMany);
                     }
 
                     for (let i = 0; i < total; i++) {
@@ -1331,7 +1730,7 @@
                 const pageIndices = Array.from(pagesToExtract).sort((a, b) => a - b);
 
                 if (pageIndices.length === 0) {
-                    throw new Error("Nomor halaman yang dimasukkan tidak valid atau melebihi jumlah halaman.");
+                    throw new Error(translations[currentLang].errorInvalidPage);
                 }
 
                 // Ekstrak halaman menjadi 1 PDF baru
@@ -1348,14 +1747,16 @@
                 return new Promise(async (resolve, reject) => {
                     try {
                         if (REMOVE_BG_API_KEY === 'TARUH_API_KEY_REMOVEBG_DISINI') {
-                            return reject(new Error("Kamu belum memasukkan API Key Remove.BG. Silakan daftar gratis di remove.bg/api untuk mendapatkannya."));
+                            return reject(new Error(currentLang === 'en'
+                                ? 'You have not entered a Remove.BG API Key. Sign up for free at remove.bg/api to get one.'
+                                : 'Kamu belum memasukkan API Key Remove.BG. Silakan daftar gratis di remove.bg/api untuk mendapatkannya.'));
                         }
 
                         const file = selectedFiles[0];
                         const baseName = file.name.replace(/\.[^.]+$/, '');
 
                         const originalLoadingText = loadingStatus.innerHTML;
-                        loadingStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sedang memproses penghapusan latar di server Remove.bg...';
+                        loadingStatus.innerHTML = translations[currentLang].removeBgLoading;
 
                         const formData = new FormData();
                         formData.append('size', 'auto');
@@ -1380,7 +1781,7 @@
                         resolve();
 
                     } catch (err) {
-                        reject(new Error("Gagal Hapus Background: " + err.message));
+                        reject(new Error(translations[currentLang].errorRemoveBg(err.message)));
                     }
                 });
             }
