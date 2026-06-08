@@ -20,6 +20,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3965718775323414"
+        crossorigin="anonymous"></script>
+
     <style>
         * {
             margin: 0;
@@ -666,6 +669,185 @@
                 padding: 8px 14px;
             }
         }
+
+        /* ================================================= */
+        /* FOOTER */
+        /* ================================================= */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 56px 40px 32px;
+            margin-top: auto;
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-brand {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .footer-logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            text-decoration: none;
+        }
+
+        .footer-logo i {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .footer-tagline {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #64748b;
+            max-width: 280px;
+        }
+
+        .footer-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .footer-badge {
+            background: rgba(99, 102, 241, 0.12);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .footer-links-group {
+            display: flex;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .footer-col h4 {
+            color: #e2e8f0;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-col ul li a:hover {
+            color: #818cf8;
+        }
+
+        .footer-col ul li a i {
+            width: 16px;
+            opacity: 0.6;
+            font-size: 12px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-top: 28px;
+        }
+
+        .footer-copy {
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .footer-copy span {
+            color: #6366f1;
+            font-weight: 600;
+        }
+
+        .footer-made {
+            font-size: 12px;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .footer-made i {
+            color: #e11d48;
+            font-size: 11px;
+        }
+
+        /* Dark mode footer sudah otomatis karena footer bg sudah gelap */
+        body.dark-mode footer {
+            background: #070d1a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                padding: 44px 20px 28px;
+            }
+
+            .footer-top {
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            .footer-links-group {
+                gap: 32px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
     </style>
 </head>
 
@@ -746,7 +928,53 @@
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3965718775323414"
             crossorigin="anonymous"></script>
 
-        <footer>&copy; 2026 LajuPDF. All rights reserved.</footer>
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <div class="footer-logo">
+                            <i class="fas fa-layer-group"></i>
+                            LajuPDF
+                        </div>
+                        <p class="footer-tagline">Solusi cerdas untuk konversi dokumen dan gambar secara online. Gratis, cepat, dan aman &mdash; tanpa instalasi.</p>
+                        <div class="footer-badges">
+                            <span class="footer-badge"><i class="fas fa-lock"></i> 100% Aman</span>
+                            <span class="footer-badge"><i class="fas fa-bolt"></i> Super Cepat</span>
+                            <span class="footer-badge"><i class="fas fa-gift"></i> Gratis</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-links-group">
+                        <div class="footer-col">
+                            <h4>Konversi Populer</h4>
+                            <ul>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-file-word"></i> Word ke PDF</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-file-excel"></i> Excel ke PDF</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-file-powerpoint"></i> PPTX ke PDF</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-image"></i> Gambar ke PDF</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-file-pdf"></i> PDF ke Word</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="footer-col">
+                            <h4>Alat Lainnya</h4>
+                            <ul>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-compress"></i> Kompres PDF</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-scissors"></i> Pisahkan PDF</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-object-group"></i> Gabung PDF</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-eraser"></i> Hapus Background</a></li>
+                                <li><a href="#" onclick="return false;"><i class="fas fa-file-lines"></i> PDF ke Teks</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p class="footer-copy">&copy; 2026 <span>LajuPDF</span>. All rights reserved.</p>
+                    <p class="footer-made">Dibuat dengan <i class="fas fa-heart"></i> untuk pengguna Indonesia</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script>
