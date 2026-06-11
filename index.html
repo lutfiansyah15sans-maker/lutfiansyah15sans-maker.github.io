@@ -2261,6 +2261,7 @@
             };
 
             let currentLang = localStorage.getItem('lajupdf_lang') || 'en';
+            let currentTool = null; // Track which workspace is open for language switching
 
             function applyLanguage(lang) {
                 currentLang = lang;
@@ -2409,7 +2410,6 @@
             let isApiRequired = false;
             let selectedFiles = [];
             let currentTotalPages = 0; // Menyimpan total halaman PDF
-            let currentTool = null; // Track which workspace is open for language switching
 
             const homeView = document.getElementById('home-view');
             const workspaceContainer = document.getElementById('workspace-container');
