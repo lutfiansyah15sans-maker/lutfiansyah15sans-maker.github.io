@@ -2261,7 +2261,6 @@
             };
 
             let currentLang = localStorage.getItem('lajupdf_lang') || 'en';
-            let currentTool = null; // Track which workspace is open for language switching
 
             function applyLanguage(lang) {
                 currentLang = lang;
@@ -2344,14 +2343,6 @@
                 document.querySelectorAll('.lang-option').forEach(opt => {
                     opt.classList.toggle('active', opt.dataset.lang === lang);
                 });
-
-                // Update workspace title & description if a tool is currently open
-                if (currentTool) {
-                    workspaceTitleEl.textContent = t.workspaceTitles[currentTool.mode] || (lang === 'en' ? 'File Conversion' : 'Konversi File');
-                    workspaceDescEl.textContent = currentTool.multiple
-                        ? t.workspaceDescMultiple
-                        : t.workspaceDescSingle;
-                }
             }
 
             // Language dropdown toggle
@@ -2446,7 +2437,6 @@
             });
 
             function openWorkspace(tool) {
-                currentTool = tool;
                 currentMode = tool.mode;
                 isApiRequired = tool.apiRequired;
                 selectedFiles = [];
@@ -2486,7 +2476,6 @@
             }
 
             function closeWorkspace() {
-                currentTool = null;
                 workspaceContainer.classList.add('hidden');
                 homeView.classList.remove('hidden');
                 window.scrollTo(0, 0);
