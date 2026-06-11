@@ -2333,6 +2333,22 @@
                 document.querySelector('.footer-copy').innerHTML  = t.footerCopy;
                 document.querySelector('.footer-made').innerHTML  = t.footerMade;
 
+                // Update active workspace if open
+                const wsContainer = document.getElementById('workspace-container');
+                if (wsContainer && !wsContainer.classList.contains('hidden')) {
+                    const activeMode = wsContainer.dataset.mode;
+                    if (activeMode && t.workspaceTitles[activeMode]) {
+                        document.getElementById('workspace-title').textContent = t.workspaceTitles[activeMode];
+                        const isMultiple = wsContainer.dataset.multiple === 'true';
+                        document.getElementById('workspace-desc').textContent = isMultiple ? t.workspaceDescMultiple : t.workspaceDescSingle;
+                    }
+                    
+                    const fileInputEl = document.getElementById('file-input');
+                    if (fileInputEl && fileInputEl.files && fileInputEl.files.length > 0) {
+                        document.getElementById('file-info').textContent = t.fileReady(fileInputEl.files.length);
+                    }
+                }
+
                 // Language button label & flag
                 const flags = { id: '🇮🇩', en: '🇬🇧', es: '🇪🇸', fr: '🇫🇷', de: '🇩🇪', pt: '🇵🇹', it: '🇮🇹', nl: '🇳🇱', ru: '🇷🇺', uk: '🇺🇦', pl: '🇵🇱', tr: '🇹🇷', ar: '🇸🇦', hi: '🇮🇳', zh: '🇨🇳', ja: '🇯🇵', ko: '🇰🇷', vi: '🇻🇳', ms: '🇲🇾', th: '🇹🇭' };
                 const labels = { id: 'ID', en: 'EN', es: 'ES', fr: 'FR', de: 'DE', pt: 'PT', it: 'IT', nl: 'NL', ru: 'RU', uk: 'UK', pl: 'PL', tr: 'TR', ar: 'AR', hi: 'HI', zh: 'ZH', ja: 'JA', ko: 'KO', vi: 'VI', ms: 'MS', th: 'TH' };
@@ -2453,6 +2469,9 @@
                 workspaceDescEl.textContent = tool.multiple
                     ? tDesc.workspaceDescMultiple
                     : tDesc.workspaceDescSingle;
+
+                workspaceContainer.dataset.mode = tool.mode;
+                workspaceContainer.dataset.multiple = tool.multiple;
 
                 // Menampilkan menu rahasia berdasarkan fitur yang diklik
                 hide(formatSelectEl);
