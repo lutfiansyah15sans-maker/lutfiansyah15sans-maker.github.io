@@ -2388,8 +2388,7 @@
                 });
             });
 
-            // Apply saved language on load
-            applyLanguage(currentLang);
+            // (Language is applied after rendering tools)
 
             // === PENAMBAHAN 3 FITUR BARU DI MENU ===
             const toolCards = [
@@ -2453,6 +2452,9 @@
                 btn.addEventListener('click', () => openWorkspace(tool));
                 toolsSection.appendChild(btn);
             });
+
+            // Apply saved language on load, AFTER tools have been rendered
+            applyLanguage(currentLang);
 
             function openWorkspace(tool) {
                 currentMode = tool.mode;
