@@ -2332,6 +2332,20 @@
                 if (footerCols[0]) footerCols[0].textContent = t.footerPopularTitle;
                 if (footerCols[1]) footerCols[1].textContent = t.footerToolsTitle;
 
+                const footerLinks = document.querySelectorAll('.footer-col ul li a');
+                if (footerLinks.length === 10) {
+                    footerLinks[0].innerHTML = '<i class="fas fa-file-word"></i> ' + t.tools[0].title;
+                    footerLinks[1].innerHTML = '<i class="fas fa-file-excel"></i> ' + t.tools[1].title;
+                    footerLinks[2].innerHTML = '<i class="fas fa-file-powerpoint"></i> ' + t.tools[2].title;
+                    footerLinks[3].innerHTML = '<i class="fas fa-image"></i> ' + t.tools[3].title;
+                    footerLinks[4].innerHTML = '<i class="fas fa-file-pdf"></i> ' + t.tools[6].title;
+                    footerLinks[5].innerHTML = '<i class="fas fa-compress"></i> ' + t.tools[12].title;
+                    footerLinks[6].innerHTML = '<i class="fas fa-scissors"></i> ' + t.tools[13].title;
+                    footerLinks[7].innerHTML = '<i class="fas fa-object-group"></i> ' + t.tools[5].title;
+                    footerLinks[8].innerHTML = '<i class="fas fa-eraser"></i> ' + t.tools[11].title;
+                    footerLinks[9].innerHTML = '<i class="fas fa-file-lines"></i> ' + t.tools[14].title;
+                }
+
                 document.querySelector('.footer-copy').innerHTML  = t.footerCopy;
                 document.querySelector('.footer-made').innerHTML  = t.footerMade;
 
