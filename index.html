@@ -2496,10 +2496,12 @@
             const loadingStatus = document.getElementById('loading-status');
 
             toolCards.forEach(tool => {
-                const btn = document.createElement('button');
+                const btn = document.createElement('a');
                 btn.className = 'tool-card';
-                btn.type = 'button';
+                btn.href = `/${tool.mode}`;
                 btn.dataset.mode = tool.mode;
+                btn.style.textDecoration = 'none';
+                btn.style.color = 'inherit';
                 btn.innerHTML = `
                   <div class="icon-circle" style="color:${tool.color};background:${tool.bg}">
                     <i class="fas fa-${tool.icon}"></i>
@@ -2507,7 +2509,11 @@
                   <div class="tool-title">${tool.title}</div>
                   <div class="tool-desc">${tool.desc}</div>
                 `;
-                btn.addEventListener('click', () => openWorkspace(tool));
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    history.pushState({ mode: tool.mode }, '', `/${tool.mode}`);
+                    openWorkspace(tool);
+                });
                 toolsSection.appendChild(btn);
             });
 
@@ -2567,8 +2573,40 @@
                 return t.workspaceTitles[tool.mode] || (currentLang === 'en' ? 'File Conversion' : 'Konversi File');
             }
 
-            logoBtnEl.addEventListener('click', closeWorkspace);
-            btnBack.addEventListener('click', closeWorkspace);
+            logoBtnEl.addEventListener('click', (e) => {
+                e.preventDefault();
+                history.pushState(null, '', '/');
+                closeWorkspace();
+            });
+            btnBack.addEventListener('click', (e) => {
+                e.preventDefault();
+                history.pushState(null, '', '/');
+                closeWorkspace();
+            });
+
+            window.addEventListener('popstate', () => {
+                const path = window.location.pathname.substring(1);
+                if (!path || path === 'index.html') {
+                    closeWorkspace();
+                } else {
+                    const tool = toolCards.find(t => t.mode === path);
+                    if (tool) {
+                        openWorkspace(tool);
+                    } else {
+                        closeWorkspace();
+                    }
+                }
+            });
+
+            window.addEventListener('DOMContentLoaded', () => {
+                const path = window.location.pathname.substring(1);
+                if (path && path !== 'index.html') {
+                    const tool = toolCards.find(t => t.mode === path);
+                    if (tool) {
+                        openWorkspace(tool);
+                    }
+                }
+            });
 
             uploadArea.addEventListener('click', () => fileInput.click());
 
